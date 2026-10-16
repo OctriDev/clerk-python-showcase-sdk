@@ -188,4 +188,4 @@ class AsyncClerkBackend(_ClerkBackendBase):
         self.o_auth_access_tokens = _AsyncOAuthAccessTokensNamespace(config)
 
 
-__all__ = ["ClerkBackend", "AsyncClerkBackend"]
+__all__ = ["AsyncClerkBackend", "ClerkBackend"]
