@@ -16,13 +16,96 @@ from octridev_clerk.types.shared_verification import (
     VerificationTicket,
 )
 from octridev_clerk.types.users_part001 import (
+    BiometricCredential,
     EnterpriseAccountConnection,
     SAMLAccountConnection,
-    VerificationOauth,
+    TrustedDevice,
     VerificationWeb3,
 )
 
-from ..validation import open_union, validate_enum, validate_required, validate_union_candidate
+from ..validation import (
+    open_union,
+    validate_enum,
+    validate_pattern,
+    validate_required,
+    validate_union_candidate,
+)
+
+
+class VerificationPasskey(BaseModel):
+    """Typed representation of the `VerificationPasskey` API schema."""
+
+    model_config = ConfigDict(populate_by_name=False, arbitrary_types_allowed=True)
+
+    status: Literal["verified"] | str
+    """Required enumerated value serialized in the `status` wire field."""
+    strategy: Literal["passkey"] | str
+    """Required enumerated value serialized in the `strategy` wire field."""
+    attempts: int | None
+    """Required `integer` value serialized in the `attempts` wire field."""
+    expire_at: int | None
+    """Required `integer` value serialized in the `expire_at` wire field."""
+    object: Literal["verification_passkey"] | NotGiven = NOT_GIVEN
+    """Optional enumerated value serialized in the `object` wire field."""
+    nonce: Literal["nonce"] | str | NotGiven = NOT_GIVEN
+    """Optional enumerated value serialized in the `nonce` wire field."""
+    message: str | None | NotGiven = NOT_GIVEN
+    """Optional `string` value serialized in the `message` wire field."""
+    verified_at_client: str | None | NotGiven = NOT_GIVEN
+    """Optional `string` value serialized in the `verified_at_client` wire field."""
+
+    @model_validator(mode="before")
+    @classmethod
+    def _validate_required(cls, value):
+        validate_required(value, ["status", "strategy", "attempts", "expire_at"])
+        return value
+
+    @field_validator("object")
+    @classmethod
+    def _validate_object(cls, value):
+        validate_enum("object", value, ["verification_passkey"])
+        return value
+
+
+class VerificationOauth(BaseModel):
+    """Typed representation of the `VerificationOauth` API schema."""
+
+    model_config = ConfigDict(populate_by_name=False, arbitrary_types_allowed=True)
+
+    status: Literal["unverified", "verified", "failed", "expired", "transferable"] | str
+    """Required enumerated value serialized in the `status` wire field."""
+    strategy: str
+    """Required `string` value serialized in the `strategy` wire field."""
+    expire_at: int
+    """Required `integer` value serialized in the `expire_at` wire field."""
+    attempts: int | None
+    """Required `integer` value serialized in the `attempts` wire field."""
+    object: Literal["verification_oauth"]
+    """Optional enumerated value serialized in the `object` wire field."""
+    external_verification_redirect_url: str | NotGiven = NOT_GIVEN
+    """Optional `string` value serialized in the `external_verification_redirect_url` wire field."""
+    error: ClerkError | None | NotGiven = NOT_GIVEN
+    """Optional object value serialized in the `error` wire field."""
+    verified_at_client: str | None | NotGiven = NOT_GIVEN
+    """Optional `string` value serialized in the `verified_at_client` wire field."""
+
+    @model_validator(mode="before")
+    @classmethod
+    def _validate_required(cls, value):
+        validate_required(value, ["status", "strategy", "attempts", "expire_at"])
+        return value
+
+    @field_validator("object")
+    @classmethod
+    def _validate_object(cls, value):
+        validate_enum("object", value, ["verification_oauth"])
+        return value
+
+    @field_validator("strategy")
+    @classmethod
+    def _validate_strategy(cls, value):
+        validate_pattern("strategy", value, "^oauth_(?:(?:token_)|(?:custom_))?[a-z]+$")
+        return value
 
 
 class VerificationGoogleOneTap(BaseModel):
@@ -55,6 +138,36 @@ class VerificationGoogleOneTap(BaseModel):
     @classmethod
     def _validate_object(cls, value):
         validate_enum("object", value, ["verification_google_one_tap"])
+        return value
+
+
+class TrustedDeviceList(BaseModel):
+    """Typed representation of the `TrustedDeviceList` API schema."""
+
+    data: list[TrustedDevice]
+    """Required array value serialized in the `data` wire field."""
+    total_count: int
+    """Total number of trusted devices"""
+
+    @model_validator(mode="before")
+    @classmethod
+    def _validate_required(cls, value):
+        validate_required(value, ["data", "total_count"])
+        return value
+
+
+class BiometricCredentialList(BaseModel):
+    """Typed representation of the `BiometricCredentialList` API schema."""
+
+    data: list[BiometricCredential]
+    """Required array value serialized in the `data` wire field."""
+    total_count: int
+    """Total number of biometric credentials"""
+
+    @model_validator(mode="before")
+    @classmethod
+    def _validate_required(cls, value):
+        validate_required(value, ["data", "total_count"])
         return value
 
 

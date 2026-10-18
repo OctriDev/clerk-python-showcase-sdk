@@ -56,7 +56,7 @@ class CommerceTotalsResponse2(BaseModel):
     per_unit_totals: list[CommercePerUnitTotal2] | NotGiven = NOT_GIVEN
     """Optional array value serialized in the `per_unit_totals` wire field."""
     credits: CommerceCreditsResponse | None | NotGiven = NOT_GIVEN
-    """Optional API value serialized in the `credits` wire field."""
+    """Optional object value serialized in the `credits` wire field."""
     discounts: BillingDiscountsResponse | None | NotGiven = NOT_GIVEN
     """Information about the discounts applied to the payment"""
 

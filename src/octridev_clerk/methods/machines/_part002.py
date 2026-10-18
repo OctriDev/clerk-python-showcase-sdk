@@ -18,12 +18,7 @@ from octridev_clerk.client import (
     sdk_request_sync,
 )
 from octridev_clerk.errors import SdkValidationError, sdk_decode
-from octridev_clerk.types import (
-    ClerkErrors,
-    DeleteMachineScopeResponse,
-    GetMachineSecretKeyResponse,
-    MachineScope,
-)
+from octridev_clerk.types import ClerkErrors, MachineScope, MachineScopeDeleted, MachineSecretKey
 from octridev_clerk.validation import validate_range
 from octridev_clerk.wire import _validate_response_enums, to_wire
 
@@ -63,7 +58,7 @@ async def rotate_machine_secret_key(
     previous_token_ttl: int,
     *,
     request_options: RequestOptions | None = None,
-) -> GetMachineSecretKeyResponse:
+) -> MachineSecretKey:
     """Rotates the machine's secret key. When the secret key is rotated, make sure to
     update it in your machine/application. The previous secret key will remain valid for
     the duration specified by the previous_token_ttl parameter.
@@ -105,8 +100,7 @@ async def rotate_machine_secret_key(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "GetMachineSecretKeyResponse"),
-            GetMachineSecretKeyResponse,
+            _validate_response_enums(response.data, "MachineSecretKey"), MachineSecretKey
         ),
     )
 
@@ -117,7 +111,7 @@ def rotate_machine_secret_key_sync(
     previous_token_ttl: int,
     *,
     request_options: RequestOptions | None = None,
-) -> GetMachineSecretKeyResponse:
+) -> MachineSecretKey:
     """Rotates the machine's secret key. When the secret key is rotated, make sure to
     update it in your machine/application. The previous secret key will remain valid for
     the duration specified by the previous_token_ttl parameter.
@@ -159,8 +153,7 @@ def rotate_machine_secret_key_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "GetMachineSecretKeyResponse"),
-            GetMachineSecretKeyResponse,
+            _validate_response_enums(response.data, "MachineSecretKey"), MachineSecretKey
         ),
     )
 
@@ -269,7 +262,7 @@ async def delete_machine_scope(
     other_machine_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> DeleteMachineScopeResponse:
+) -> MachineScopeDeleted:
     """Deletes a machine scope, removing access from one machine to another.
 
     Args:
@@ -295,8 +288,7 @@ async def delete_machine_scope(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "DeleteMachineScopeResponse"),
-            DeleteMachineScopeResponse,
+            _validate_response_enums(response.data, "MachineScopeDeleted"), MachineScopeDeleted
         ),
     )
 
@@ -307,7 +299,7 @@ def delete_machine_scope_sync(
     other_machine_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> DeleteMachineScopeResponse:
+) -> MachineScopeDeleted:
     """Deletes a machine scope, removing access from one machine to another.
 
     Args:
@@ -333,8 +325,7 @@ def delete_machine_scope_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "DeleteMachineScopeResponse"),
-            DeleteMachineScopeResponse,
+            _validate_response_enums(response.data, "MachineScopeDeleted"), MachineScopeDeleted
         ),
     )
 

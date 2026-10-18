@@ -144,3 +144,50 @@ class DirectoryGroupRoleMapping(BaseModel):
 DirectoryGroupRoleMappings = TypeAliasType(
     "DirectoryGroupRoleMappings", "list[DirectoryGroupRoleMapping]"
 )
+
+
+class DirectoryGroupRoleMappingDeleted(BaseModel):
+    """Typed representation of the `DirectoryGroupRoleMappingDeleted` API schema."""
+
+    object: Literal["directory_group_role_mapping"] | str
+    """String representing the object's type."""
+    id: str
+    """The ID of the deleted directory group role mapping."""
+    deleted: bool
+    """Whether the directory group role mapping was successfully deleted."""
+
+    @model_validator(mode="before")
+    @classmethod
+    def _validate_required(cls, value):
+        validate_required(value, ["object", "id", "deleted"])
+        return value
+
+
+class DirectoryList(BaseModel):
+    """Typed representation of the `DirectoryList` API schema."""
+
+    data: Directories
+    """Required array value serialized in the `data` wire field."""
+    total_count: int
+    """Total number of directories."""
+
+    @model_validator(mode="before")
+    @classmethod
+    def _validate_required(cls, value):
+        validate_required(value, ["data", "total_count"])
+        return value
+
+
+class DirectoryGroupRoleMappingList(BaseModel):
+    """Typed representation of the `DirectoryGroupRoleMappingList` API schema."""
+
+    data: DirectoryGroupRoleMappings
+    """Required array value serialized in the `data` wire field."""
+    total_count: int
+    """Total number of directory group role mappings in the directory."""
+
+    @model_validator(mode="before")
+    @classmethod
+    def _validate_required(cls, value):
+        validate_required(value, ["data", "total_count"])
+        return value

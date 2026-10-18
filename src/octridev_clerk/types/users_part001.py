@@ -3,29 +3,24 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Annotated, Any, Literal, TypeAlias
+from typing import TYPE_CHECKING, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, WrapValidator, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 from typing_extensions import TypeAliasType
 
 from octridev_clerk.client import NOT_GIVEN, NotGiven
-from octridev_clerk.types.shared_clerk import ClerkError
 from octridev_clerk.types.shared_email import EmailAddress
 from octridev_clerk.types.shared_organization import OrganizationMembership
 from octridev_clerk.types.shared_phone import PhoneNumber
 
-from ..validation import (
-    validate_enum,
-    validate_pattern,
-    validate_required,
-    validate_union_candidate,
-)
+from ..validation import validate_enum, validate_required
 
 if TYPE_CHECKING:
     from octridev_clerk.types.users_part002 import (
         EnterpriseAccount,
         ExternalAccountWithVerification,
         SAMLAccount,
+        VerificationPasskey,
         Web3Wallet,
     )
 
@@ -53,12 +48,109 @@ class Passkey(BaseModel):
         return value
 
 
-# SAMLAccountConnection is a union type
-SAMLAccountConnection: TypeAlias = Annotated[Any, WrapValidator(validate_union_candidate)]
+class SAMLAccountConnection(BaseModel):
+    """Typed representation of the `SAMLAccountConnection` API schema."""
+
+    model_config = ConfigDict(populate_by_name=False, arbitrary_types_allowed=True)
+
+    id: str
+    """Required `string` value serialized in the `id` wire field."""
+    name: str
+    """Required `string` value serialized in the `name` wire field."""
+    active: bool
+    """Required `boolean` value serialized in the `active` wire field."""
+    provider: str
+    """Required `string` value serialized in the `provider` wire field."""
+    sync_user_attributes: bool
+    """Required `boolean` value serialized in the `sync_user_attributes` wire field."""
+    created_at: int
+    """Unix timestamp of creation."""
+    updated_at: int
+    """Unix timestamp of last update."""
+    domain: str | NotGiven = NOT_GIVEN
+    """Optional `string` value serialized in the `domain` wire field."""
+    domains: list[str] | NotGiven = NOT_GIVEN
+    """Optional array value serialized in the `domains` wire field."""
+    allow_subdomains: bool | NotGiven = NOT_GIVEN
+    """Optional `boolean` value serialized in the `allow_subdomains` wire field."""
+    allow_idp_initiated: bool | NotGiven = NOT_GIVEN
+    """Optional `boolean` value serialized in the `allow_idp_initiated` wire field."""
+    disable_additional_identifications: bool | NotGiven = NOT_GIVEN
+    """Optional `boolean` value serialized in the `disable_additional_identifications` wire field."""
+
+    @model_validator(mode="before")
+    @classmethod
+    def _validate_required(cls, value):
+        validate_required(
+            value,
+            [
+                "id",
+                "name",
+                "active",
+                "provider",
+                "sync_user_attributes",
+                "created_at",
+                "updated_at",
+            ],
+        )
+        return value
 
 
-# EnterpriseAccountConnection is a union type
-EnterpriseAccountConnection: TypeAlias = Annotated[Any, WrapValidator(validate_union_candidate)]
+class EnterpriseAccountConnection(BaseModel):
+    """Typed representation of the `EnterpriseAccountConnection` API schema."""
+
+    model_config = ConfigDict(populate_by_name=False, arbitrary_types_allowed=True)
+
+    id: str
+    """Required `string` value serialized in the `id` wire field."""
+    protocol: str
+    """Required `string` value serialized in the `protocol` wire field."""
+    provider: str
+    """Required `string` value serialized in the `provider` wire field."""
+    name: str
+    """Required `string` value serialized in the `name` wire field."""
+    logo_public_url: str | None
+    """Required `string` value serialized in the `logo_public_url` wire field."""
+    active: bool
+    """Required `boolean` value serialized in the `active` wire field."""
+    sync_user_attributes: bool
+    """Required `boolean` value serialized in the `sync_user_attributes` wire field."""
+    allow_subdomains: bool
+    """Required `boolean` value serialized in the `allow_subdomains` wire field."""
+    allow_idp_initiated: bool
+    """Required `boolean` value serialized in the `allow_idp_initiated` wire field."""
+    disable_additional_identifications: bool
+    """Required `boolean` value serialized in the `disable_additional_identifications` wire field."""
+    created_at: int
+    """Unix timestamp of creation."""
+    updated_at: int
+    """Unix timestamp of last update."""
+    domain: str | NotGiven = NOT_GIVEN
+    """Optional `string` value serialized in the `domain` wire field."""
+    domains: list[str] | NotGiven = NOT_GIVEN
+    """Optional array value serialized in the `domains` wire field."""
+
+    @model_validator(mode="before")
+    @classmethod
+    def _validate_required(cls, value):
+        validate_required(
+            value,
+            [
+                "id",
+                "protocol",
+                "name",
+                "logo_public_url",
+                "active",
+                "provider",
+                "sync_user_attributes",
+                "disable_additional_identifications",
+                "allow_subdomains",
+                "allow_idp_initiated",
+                "created_at",
+                "updated_at",
+            ],
+        )
+        return value
 
 
 class SCIMUserMetadataGroupsItem(BaseModel):
@@ -472,80 +564,4 @@ class VerificationWeb3(BaseModel):
     @classmethod
     def _validate_object(cls, value):
         validate_enum("object", value, ["verification_web3"])
-        return value
-
-
-class VerificationPasskey(BaseModel):
-    """Typed representation of the `VerificationPasskey` API schema."""
-
-    model_config = ConfigDict(populate_by_name=False, arbitrary_types_allowed=True)
-
-    status: Literal["verified"] | str
-    """Required enumerated value serialized in the `status` wire field."""
-    strategy: Literal["passkey"] | str
-    """Required enumerated value serialized in the `strategy` wire field."""
-    attempts: int | None
-    """Required `integer` value serialized in the `attempts` wire field."""
-    expire_at: int | None
-    """Required `integer` value serialized in the `expire_at` wire field."""
-    object: Literal["verification_passkey"] | NotGiven = NOT_GIVEN
-    """Optional enumerated value serialized in the `object` wire field."""
-    nonce: Literal["nonce"] | str | NotGiven = NOT_GIVEN
-    """Optional enumerated value serialized in the `nonce` wire field."""
-    message: str | None | NotGiven = NOT_GIVEN
-    """Optional `string` value serialized in the `message` wire field."""
-    verified_at_client: str | None | NotGiven = NOT_GIVEN
-    """Optional `string` value serialized in the `verified_at_client` wire field."""
-
-    @model_validator(mode="before")
-    @classmethod
-    def _validate_required(cls, value):
-        validate_required(value, ["status", "strategy", "attempts", "expire_at"])
-        return value
-
-    @field_validator("object")
-    @classmethod
-    def _validate_object(cls, value):
-        validate_enum("object", value, ["verification_passkey"])
-        return value
-
-
-class VerificationOauth(BaseModel):
-    """Typed representation of the `VerificationOauth` API schema."""
-
-    model_config = ConfigDict(populate_by_name=False, arbitrary_types_allowed=True)
-
-    status: Literal["unverified", "verified", "failed", "expired", "transferable"] | str
-    """Required enumerated value serialized in the `status` wire field."""
-    strategy: str
-    """Required `string` value serialized in the `strategy` wire field."""
-    expire_at: int
-    """Required `integer` value serialized in the `expire_at` wire field."""
-    attempts: int | None
-    """Required `integer` value serialized in the `attempts` wire field."""
-    object: Literal["verification_oauth"]
-    """Optional enumerated value serialized in the `object` wire field."""
-    external_verification_redirect_url: str | NotGiven = NOT_GIVEN
-    """Optional `string` value serialized in the `external_verification_redirect_url` wire field."""
-    error: ClerkError | None | NotGiven = NOT_GIVEN
-    """Optional object value serialized in the `error` wire field."""
-    verified_at_client: str | None | NotGiven = NOT_GIVEN
-    """Optional `string` value serialized in the `verified_at_client` wire field."""
-
-    @model_validator(mode="before")
-    @classmethod
-    def _validate_required(cls, value):
-        validate_required(value, ["status", "strategy", "attempts", "expire_at"])
-        return value
-
-    @field_validator("object")
-    @classmethod
-    def _validate_object(cls, value):
-        validate_enum("object", value, ["verification_oauth"])
-        return value
-
-    @field_validator("strategy")
-    @classmethod
-    def _validate_strategy(cls, value):
-        validate_pattern("strategy", value, "^oauth_(?:(?:token_)|(?:custom_))?[a-z]+$")
         return value

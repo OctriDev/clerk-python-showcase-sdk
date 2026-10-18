@@ -25,8 +25,8 @@ from octridev_clerk.types import (
     CreateDirectoryGroupRoleMappingsItem,
     DeletedObject,
     Directory,
-    ListDirectoriesResponse,
-    ListDirectoryGroupRoleMappingsResponse,
+    DirectoryGroupRoleMappingList,
+    DirectoryList,
 )
 from octridev_clerk.validation import validate_range
 from octridev_clerk.wire import _validate_response_enums, to_wire
@@ -67,7 +67,7 @@ async def list_directories(
     offset: int | NotGiven = NOT_GIVEN,
     *,
     request_options: RequestOptions | None = None,
-) -> ListDirectoriesResponse:
+) -> DirectoryList:
     """Returns a list of all directories for the instance.
 
     Args:
@@ -96,8 +96,7 @@ async def list_directories(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "ListDirectoriesResponse"),
-            ListDirectoriesResponse,
+            _validate_response_enums(response.data, "DirectoryList"), DirectoryList
         ),
     )
 
@@ -108,7 +107,7 @@ def list_directories_sync(
     offset: int | NotGiven = NOT_GIVEN,
     *,
     request_options: RequestOptions | None = None,
-) -> ListDirectoriesResponse:
+) -> DirectoryList:
     """Returns a list of all directories for the instance.
 
     Args:
@@ -137,8 +136,7 @@ def list_directories_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "ListDirectoriesResponse"),
-            ListDirectoriesResponse,
+            _validate_response_enums(response.data, "DirectoryList"), DirectoryList
         ),
     )
 
@@ -602,7 +600,7 @@ async def list_directory_group_role_mappings(
     directory_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> ListDirectoryGroupRoleMappingsResponse:
+) -> DirectoryGroupRoleMappingList:
     """Returns the list of directory group to organization role mappings for a directory,
     ordered by precedence.
 
@@ -622,8 +620,8 @@ async def list_directory_group_role_mappings(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "ListDirectoryGroupRoleMappingsResponse"),
-            ListDirectoryGroupRoleMappingsResponse,
+            _validate_response_enums(response.data, "DirectoryGroupRoleMappingList"),
+            DirectoryGroupRoleMappingList,
         ),
     )
 
@@ -633,7 +631,7 @@ def list_directory_group_role_mappings_sync(
     directory_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> ListDirectoryGroupRoleMappingsResponse:
+) -> DirectoryGroupRoleMappingList:
     """Returns the list of directory group to organization role mappings for a directory,
     ordered by precedence.
 
@@ -653,8 +651,8 @@ def list_directory_group_role_mappings_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "ListDirectoryGroupRoleMappingsResponse"),
-            ListDirectoryGroupRoleMappingsResponse,
+            _validate_response_enums(response.data, "DirectoryGroupRoleMappingList"),
+            DirectoryGroupRoleMappingList,
         ),
     )
 

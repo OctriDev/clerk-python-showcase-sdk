@@ -81,7 +81,7 @@ An operation that declares error models also defines `<Operation>Error` beside i
 ## Project layout and API discovery
 
 - Operation implementations are grouped under `src/octridev_clerk/methods/`.
-- 234 component models are split by API domain under `src/octridev_clerk/types/<domain>.py` or `types/<tag path>/models.py`, re-exported by `octridev_clerk.types`.
+- 235 component models are split by API domain under `src/octridev_clerk/types/<domain>.py` or `types/<tag path>/models.py`, re-exported by `octridev_clerk.types`.
 - Component schemas can choose a nested model folder with `x-octri-sdk-tags: ["Billing/Invoices"]`; the first tag owns the model and `/` creates nesting.
 - [`sdk-manifest.json`](sdk-manifest.json) is the language-neutral public API index: operations, request/response modes, model properties, enum values, and generation settings.
 - Public barrel/module exports are the compatibility boundary. Import public model names from those exports; internal domain filenames may evolve without changing model names.

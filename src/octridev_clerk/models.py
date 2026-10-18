@@ -21,6 +21,7 @@ from .types import (
     BillingProrationDiscountDetail,
     BillingStatement,
     BiometricCredential,
+    BiometricCredentialList,
     BlocklistIdentifier,
     BlocklistIdentifiers,
     ClerkError,
@@ -70,7 +71,6 @@ from .types import (
     CreateEnterpriseConnectionOidc,
     CreateEnterpriseConnectionSaml,
     CreateM2MTokenResponse,
-    CreateMachineResponse,
     CreateSAMLConnectionAttributeMapping,
     CreateSAMLConnectionLoginHint,
     CreateSCIMDirectoryGroupRoleMappingsItem,
@@ -78,20 +78,20 @@ from .types import (
     CreateSessionTokenResponse,
     DeleteApiKeyResponse,
     DeleteBackupCodeResponse,
-    DeleteDirectoryGroupRoleMappingResponse,
     DeletedObject,
-    DeleteMachineResponse,
-    DeleteMachineScopeResponse,
-    DeleteSCIMGroupRoleMappingResponse,
     DeleteTOTPResponse,
     Directory,
     DirectoryGroupRoleMapping,
+    DirectoryGroupRoleMappingDeleted,
+    DirectoryGroupRoleMappingList,
+    DirectoryList,
     DisableMFAResponse,
     DNSTarget,
     Domain,
     Domains,
     EmailAddress,
     EnterpriseAccount,
+    EnterpriseAccountConnection,
     EnterpriseConnection,
     EnterpriseConnections,
     EnterpriseConnectionTestRun,
@@ -104,13 +104,14 @@ from .types import (
     GetApiKeyResponse,
     GetApiKeySecretResponse,
     GetM2MTokensResponse,
-    GetMachineSecretKeyResponse,
     IdentificationLink,
     Instance,
     InstanceCommunication,
     InstanceProtect,
     InstanceRestrictions,
+    InstanceSettings,
     Invitation,
+    InvitationRevoked,
     JWKSEcdsaPrivateKey,
     JWKSEcdsaPublicKey,
     JWKSEd25519PrivateKey,
@@ -120,16 +121,13 @@ from .types import (
     JWKSSymmetricKey,
     JWTTemplate,
     ListApiKeysResponse,
-    ListDirectoriesResponse,
-    ListDirectoryGroupRoleMappingsResponse,
-    ListMachinesResponse,
-    ListSCIMDirectoriesResponse,
-    ListSCIMGroupRoleMappingsResponse,
-    ListUserBiometricCredentialsResponse,
-    ListUserTrustedDevicesResponse,
-    ListWaitlistEntriesResponse,
     Machine,
+    MachineCreated,
+    MachineDeleted,
+    MachineList,
     MachineScope,
+    MachineScopeDeleted,
+    MachineSecretKey,
     MachineWithoutScopedMachines,
     OAuthApplication,
     OAuthApplications,
@@ -160,7 +158,6 @@ from .types import (
     Permission,
     Permissions,
     PhoneNumber,
-    PrepareEmailAddressVerificationResponse,
     PriceTransitionRequest,
     ProxyCheck,
     RedirectURL,
@@ -169,7 +166,6 @@ from .types import (
     Reverification,
     RevokeAdminPortalLinkTokenResponse,
     RevokeApiKeyResponse,
-    RevokeInvitationResponse,
     RevokeM2MTokenResponse,
     Role,
     Roles,
@@ -178,11 +174,16 @@ from .types import (
     RoleSetMigration,
     RoleSets,
     SAMLAccount,
+    SAMLAccountConnection,
+    SAMLConnection,
     SAMLConnectionAttributeMapping,
     SAMLConnectionLoginHint,
     SAMLConnections,
     SCIMDirectory,
+    SCIMDirectoryList,
     SCIMGroupRoleMapping,
+    SCIMGroupRoleMappingDeleted,
+    SCIMGroupRoleMappingList,
     SCIMUserMetadata,
     Session,
     SessionActivityResponse,
@@ -199,11 +200,11 @@ from .types import (
     Token,
     TotalCount,
     TrustedDevice,
+    TrustedDeviceList,
     UpdateApiKeyResponse,
     UpdateEnterpriseConnectionCustomAttributesItem,
     UpdateEnterpriseConnectionOidc,
     UpdateEnterpriseConnectionSaml,
-    UpdateInstanceAuthConfigResponse,
     UpdateSAMLConnectionAttributeMapping,
     UpdateSAMLConnectionLoginHint,
     User,
@@ -214,6 +215,7 @@ from .types import (
     VerificationOauth,
     VerificationOtp,
     VerificationPasskey,
+    VerificationResponse,
     VerificationSaml,
     VerificationScim,
     VerificationTicket,
@@ -222,6 +224,7 @@ from .types import (
     VerifyM2MTokenResponse,
     VerifyPasswordResponse,
     VerifyTOTPResponse,
+    WaitlistEntries,
     WaitlistEntry,
     Web3Wallet,
 )
@@ -759,7 +762,6 @@ _SCHEMAS: dict[str, Any] = {
             "created_at": {"python": "created_at", "type": "integer"},
             "updated_at": {"python": "updated_at", "type": "integer"},
         },
-        "anyOf": [{"required": ["domain"]}, {"required": ["domains"]}],
     },
     "SAMLAccount": {
         "type": "object",
@@ -823,7 +825,6 @@ _SCHEMAS: dict[str, Any] = {
             "created_at": {"python": "created_at", "type": "integer"},
             "updated_at": {"python": "updated_at", "type": "integer"},
         },
-        "anyOf": [{"required": ["domain"]}, {"required": ["domains"]}],
     },
     "EnterpriseAccount": {
         "type": "object",
@@ -948,61 +949,7 @@ _SCHEMAS: dict[str, Any] = {
             "permissions": {"python": "permissions", "type": "array", "items": {"type": "string"}},
             "public_metadata": {"python": "public_metadata", "type": "object"},
             "private_metadata": {"python": "private_metadata", "type": "object"},
-            "organization": {
-                "python": "organization",
-                "type": "object",
-                "nullable": False,
-                "required": [
-                    "object",
-                    "id",
-                    "name",
-                    "slug",
-                    "has_image",
-                    "max_allowed_memberships",
-                    "admin_delete_enabled",
-                    "public_metadata",
-                    "created_at",
-                    "updated_at",
-                ],
-                "properties": {
-                    "object": {"python": "object", "type": "string"},
-                    "id": {"python": "id", "type": "string"},
-                    "name": {"python": "name", "type": "string"},
-                    "slug": {"python": "slug", "type": "string"},
-                    "image_url": {"python": "image_url", "type": "string"},
-                    "has_image": {"python": "has_image", "type": "boolean"},
-                    "members_count": {"python": "members_count", "type": "integer"},
-                    "missing_member_with_elevated_permissions": {
-                        "python": "missing_member_with_elevated_permissions",
-                        "type": "boolean",
-                    },
-                    "pending_invitations_count": {
-                        "python": "pending_invitations_count",
-                        "type": "integer",
-                    },
-                    "max_allowed_memberships": {
-                        "python": "max_allowed_memberships",
-                        "type": "integer",
-                    },
-                    "admin_delete_enabled": {"python": "admin_delete_enabled", "type": "boolean"},
-                    "self_serve_sso_enabled": {
-                        "python": "self_serve_sso_enabled",
-                        "type": "boolean",
-                    },
-                    "self_serve_directory_sync_enabled": {
-                        "python": "self_serve_directory_sync_enabled",
-                        "type": "boolean",
-                    },
-                    "public_metadata": {"python": "public_metadata", "type": "object"},
-                    "private_metadata": {"python": "private_metadata", "type": "object"},
-                    "created_by": {"python": "created_by", "type": "string"},
-                    "created_at": {"python": "created_at", "type": "integer"},
-                    "updated_at": {"python": "updated_at", "type": "integer"},
-                    "last_active_at": {"python": "last_active_at", "type": "integer"},
-                    "role_set_key": {"python": "role_set_key", "type": "string", "nullable": True},
-                },
-                "allOf": [{"ref": "Organization"}],
-            },
+            "organization": {"python": "organization", "ref": "Organization"},
             "public_user_data": {
                 "python": "public_user_data",
                 "ref": "OrganizationMembershipPublicUserData",
@@ -1202,83 +1149,8 @@ _SCHEMAS: dict[str, Any] = {
                 "type": "array",
                 "items": {"ref": "SCIMUserMetadata"},
             },
-            "directory": {
-                "python": "directory",
-                "required": [
-                    "id",
-                    "directory_name",
-                    "provider",
-                    "enterprise_connection_id",
-                    "directory_enabled",
-                    "directory_id",
-                    "external_id",
-                ],
-                "properties": {
-                    "id": {"python": "id", "type": "string"},
-                    "directory_name": {"python": "directory_name", "type": "string"},
-                    "provider": {"python": "provider", "type": "string"},
-                    "enterprise_connection_id": {
-                        "python": "enterprise_connection_id",
-                        "type": "string",
-                        "nullable": True,
-                    },
-                    "groups": {
-                        "python": "groups",
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "required": ["id", "display_name"],
-                            "properties": {
-                                "id": {"python": "id", "type": "string"},
-                                "display_name": {"python": "display_name", "type": "string"},
-                            },
-                        },
-                    },
-                    "directory_id": {"python": "directory_id", "type": "string"},
-                    "directory_enabled": {"python": "directory_enabled", "type": "boolean"},
-                    "external_id": {"python": "external_id", "type": "string", "nullable": True},
-                },
-                "allOf": [{"ref": "SCIMUserMetadata"}],
-            },
-            "scim": {
-                "python": "scim",
-                "nullable": True,
-                "required": [
-                    "id",
-                    "directory_name",
-                    "provider",
-                    "enterprise_connection_id",
-                    "directory_enabled",
-                    "directory_id",
-                    "external_id",
-                ],
-                "properties": {
-                    "id": {"python": "id", "type": "string"},
-                    "directory_name": {"python": "directory_name", "type": "string"},
-                    "provider": {"python": "provider", "type": "string"},
-                    "enterprise_connection_id": {
-                        "python": "enterprise_connection_id",
-                        "type": "string",
-                        "nullable": True,
-                    },
-                    "groups": {
-                        "python": "groups",
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "required": ["id", "display_name"],
-                            "properties": {
-                                "id": {"python": "id", "type": "string"},
-                                "display_name": {"python": "display_name", "type": "string"},
-                            },
-                        },
-                    },
-                    "directory_id": {"python": "directory_id", "type": "string"},
-                    "directory_enabled": {"python": "directory_enabled", "type": "boolean"},
-                    "external_id": {"python": "external_id", "type": "string", "nullable": True},
-                },
-                "allOf": [{"ref": "SCIMUserMetadata"}],
-            },
+            "directory": {"python": "directory", "ref": "SCIMUserMetadata"},
+            "scim": {"python": "scim", "ref": "SCIMUserMetadata"},
         },
     },
     "PasswordHasher": {"type": "string"},
@@ -1303,18 +1175,7 @@ _SCHEMAS: dict[str, Any] = {
     "CommerceSubscriptionCreditResponse": {
         "type": "object",
         "properties": {
-            "amount": {
-                "python": "amount",
-                "nullable": True,
-                "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                "properties": {
-                    "amount": {"python": "amount", "type": "integer"},
-                    "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                    "currency": {"python": "currency", "type": "string"},
-                    "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                },
-                "allOf": [{"ref": "CommerceMoneyResponse"}],
-            },
+            "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
             "cycle_remaining_percent": {"python": "cycle_remaining_percent", "type": "number"},
         },
     },
@@ -1345,39 +1206,8 @@ _SCHEMAS: dict[str, Any] = {
         "type": "object",
         "required": ["proration", "payer", "total"],
         "properties": {
-            "proration": {
-                "python": "proration",
-                "nullable": True,
-                "required": [
-                    "amount",
-                    "cycle_days_remaining",
-                    "cycle_days_total",
-                    "cycle_remaining_percent",
-                ],
-                "properties": {
-                    "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
-                    "cycle_days_remaining": {"python": "cycle_days_remaining", "type": "integer"},
-                    "cycle_days_total": {"python": "cycle_days_total", "type": "integer"},
-                    "cycle_remaining_percent": {
-                        "python": "cycle_remaining_percent",
-                        "type": "number",
-                    },
-                },
-                "allOf": [{"ref": "CommerceProrationCreditDetailResponse"}],
-            },
-            "payer": {
-                "python": "payer",
-                "nullable": True,
-                "required": ["remaining_balance", "applied_amount"],
-                "properties": {
-                    "remaining_balance": {
-                        "python": "remaining_balance",
-                        "ref": "CommerceMoneyResponse",
-                    },
-                    "applied_amount": {"python": "applied_amount", "ref": "CommerceMoneyResponse"},
-                },
-                "allOf": [{"ref": "CommercePayerCreditResponse"}],
-            },
+            "proration": {"python": "proration", "ref": "CommerceProrationCreditDetailResponse"},
+            "payer": {"python": "payer", "ref": "CommercePayerCreditResponse"},
             "total": {"python": "total", "ref": "CommerceMoneyResponse"},
         },
     },
@@ -1440,42 +1270,9 @@ _SCHEMAS: dict[str, Any] = {
             "object": {"python": "object", "type": "string"},
             "id": {"python": "id", "type": "string"},
             "name": {"python": "name", "type": "string"},
-            "fee": {
-                "python": "fee",
-                "nullable": True,
-                "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                "properties": {
-                    "amount": {"python": "amount", "type": "integer"},
-                    "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                    "currency": {"python": "currency", "type": "string"},
-                    "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                },
-                "allOf": [{"ref": "CommerceMoneyResponse"}],
-            },
-            "annual_monthly_fee": {
-                "python": "annual_monthly_fee",
-                "nullable": True,
-                "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                "properties": {
-                    "amount": {"python": "amount", "type": "integer"},
-                    "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                    "currency": {"python": "currency", "type": "string"},
-                    "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                },
-                "allOf": [{"ref": "CommerceMoneyResponse"}],
-            },
-            "annual_fee": {
-                "python": "annual_fee",
-                "nullable": True,
-                "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                "properties": {
-                    "amount": {"python": "amount", "type": "integer"},
-                    "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                    "currency": {"python": "currency", "type": "string"},
-                    "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                },
-                "allOf": [{"ref": "CommerceMoneyResponse"}],
-            },
+            "fee": {"python": "fee", "ref": "CommerceMoneyResponse"},
+            "annual_monthly_fee": {"python": "annual_monthly_fee", "ref": "CommerceMoneyResponse"},
+            "annual_fee": {"python": "annual_fee", "ref": "CommerceMoneyResponse"},
             "description": {"python": "description", "type": "string", "nullable": True},
             "product_id": {"python": "product_id", "type": "string"},
             "is_default": {"python": "is_default", "type": "boolean"},
@@ -1573,23 +1370,7 @@ _SCHEMAS: dict[str, Any] = {
         "type": "object",
         "required": ["proration", "total"],
         "properties": {
-            "proration": {
-                "python": "proration",
-                "nullable": True,
-                "required": [
-                    "amount",
-                    "cycle_days_passed",
-                    "cycle_days_total",
-                    "cycle_passed_percent",
-                ],
-                "properties": {
-                    "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
-                    "cycle_days_passed": {"python": "cycle_days_passed", "type": "integer"},
-                    "cycle_days_total": {"python": "cycle_days_total", "type": "integer"},
-                    "cycle_passed_percent": {"python": "cycle_passed_percent", "type": "number"},
-                },
-                "allOf": [{"ref": "CommerceProrationDiscountResponse"}],
-            },
+            "proration": {"python": "proration", "ref": "CommerceProrationDiscountResponse"},
             "total": {"python": "total", "ref": "CommerceMoneyResponse"},
         },
     },
@@ -1606,209 +1387,21 @@ _SCHEMAS: dict[str, Any] = {
                 "type": "array",
                 "items": {"ref": "CommercePerUnitTotal"},
             },
-            "credits": {
-                "python": "credits",
-                "nullable": True,
-                "required": ["proration", "payer", "total"],
-                "properties": {
-                    "proration": {
-                        "python": "proration",
-                        "nullable": True,
-                        "required": [
-                            "amount",
-                            "cycle_days_remaining",
-                            "cycle_days_total",
-                            "cycle_remaining_percent",
-                        ],
-                        "properties": {
-                            "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
-                            "cycle_days_remaining": {
-                                "python": "cycle_days_remaining",
-                                "type": "integer",
-                            },
-                            "cycle_days_total": {"python": "cycle_days_total", "type": "integer"},
-                            "cycle_remaining_percent": {
-                                "python": "cycle_remaining_percent",
-                                "type": "number",
-                            },
-                        },
-                        "allOf": [{"ref": "CommerceProrationCreditDetailResponse"}],
-                    },
-                    "payer": {
-                        "python": "payer",
-                        "nullable": True,
-                        "required": ["remaining_balance", "applied_amount"],
-                        "properties": {
-                            "remaining_balance": {
-                                "python": "remaining_balance",
-                                "ref": "CommerceMoneyResponse",
-                            },
-                            "applied_amount": {
-                                "python": "applied_amount",
-                                "ref": "CommerceMoneyResponse",
-                            },
-                        },
-                        "allOf": [{"ref": "CommercePayerCreditResponse"}],
-                    },
-                    "total": {"python": "total", "ref": "CommerceMoneyResponse"},
-                },
-                "allOf": [{"ref": "CommerceCreditsResponse"}],
-            },
-            "discounts": {
-                "python": "discounts",
-                "nullable": True,
-                "required": ["proration", "total"],
-                "properties": {
-                    "proration": {
-                        "python": "proration",
-                        "nullable": True,
-                        "required": [
-                            "amount",
-                            "cycle_days_passed",
-                            "cycle_days_total",
-                            "cycle_passed_percent",
-                        ],
-                        "properties": {
-                            "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
-                            "cycle_days_passed": {"python": "cycle_days_passed", "type": "integer"},
-                            "cycle_days_total": {"python": "cycle_days_total", "type": "integer"},
-                            "cycle_passed_percent": {
-                                "python": "cycle_passed_percent",
-                                "type": "number",
-                            },
-                        },
-                        "allOf": [{"ref": "CommerceProrationDiscountResponse"}],
-                    },
-                    "total": {"python": "total", "ref": "CommerceMoneyResponse"},
-                },
-                "allOf": [{"ref": "CommerceDiscountsResponse"}],
-            },
+            "credits": {"python": "credits", "ref": "CommerceCreditsResponse"},
+            "discounts": {"python": "discounts", "ref": "CommerceDiscountsResponse"},
         },
     },
     "CommerceSubscriptionItemNextPaymentResponse": {
         "type": "object",
         "properties": {
-            "amount": {
-                "python": "amount",
-                "nullable": True,
-                "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                "properties": {
-                    "amount": {"python": "amount", "type": "integer"},
-                    "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                    "currency": {"python": "currency", "type": "string"},
-                    "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                },
-                "allOf": [{"ref": "CommerceMoneyResponse"}],
-            },
+            "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
             "date": {"python": "date", "type": "integer", "nullable": True},
             "per_unit_totals": {
                 "python": "per_unit_totals",
                 "type": "array",
                 "items": {"ref": "CommercePerUnitTotal"},
             },
-            "totals": {
-                "python": "totals",
-                "nullable": True,
-                "required": ["subtotal", "base_fee", "tax_total", "grand_total"],
-                "properties": {
-                    "subtotal": {"python": "subtotal", "ref": "CommerceMoneyResponse"},
-                    "base_fee": {"python": "base_fee", "ref": "CommerceMoneyResponse"},
-                    "tax_total": {"python": "tax_total", "ref": "CommerceMoneyResponse"},
-                    "grand_total": {"python": "grand_total", "ref": "CommerceMoneyResponse"},
-                    "per_unit_totals": {
-                        "python": "per_unit_totals",
-                        "type": "array",
-                        "items": {"ref": "CommercePerUnitTotal"},
-                    },
-                    "credits": {
-                        "python": "credits",
-                        "nullable": True,
-                        "required": ["proration", "payer", "total"],
-                        "properties": {
-                            "proration": {
-                                "python": "proration",
-                                "nullable": True,
-                                "required": [
-                                    "amount",
-                                    "cycle_days_remaining",
-                                    "cycle_days_total",
-                                    "cycle_remaining_percent",
-                                ],
-                                "properties": {
-                                    "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
-                                    "cycle_days_remaining": {
-                                        "python": "cycle_days_remaining",
-                                        "type": "integer",
-                                    },
-                                    "cycle_days_total": {
-                                        "python": "cycle_days_total",
-                                        "type": "integer",
-                                    },
-                                    "cycle_remaining_percent": {
-                                        "python": "cycle_remaining_percent",
-                                        "type": "number",
-                                    },
-                                },
-                                "allOf": [{"ref": "CommerceProrationCreditDetailResponse"}],
-                            },
-                            "payer": {
-                                "python": "payer",
-                                "nullable": True,
-                                "required": ["remaining_balance", "applied_amount"],
-                                "properties": {
-                                    "remaining_balance": {
-                                        "python": "remaining_balance",
-                                        "ref": "CommerceMoneyResponse",
-                                    },
-                                    "applied_amount": {
-                                        "python": "applied_amount",
-                                        "ref": "CommerceMoneyResponse",
-                                    },
-                                },
-                                "allOf": [{"ref": "CommercePayerCreditResponse"}],
-                            },
-                            "total": {"python": "total", "ref": "CommerceMoneyResponse"},
-                        },
-                        "allOf": [{"ref": "CommerceCreditsResponse"}],
-                    },
-                    "discounts": {
-                        "python": "discounts",
-                        "nullable": True,
-                        "required": ["proration", "total"],
-                        "properties": {
-                            "proration": {
-                                "python": "proration",
-                                "nullable": True,
-                                "required": [
-                                    "amount",
-                                    "cycle_days_passed",
-                                    "cycle_days_total",
-                                    "cycle_passed_percent",
-                                ],
-                                "properties": {
-                                    "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
-                                    "cycle_days_passed": {
-                                        "python": "cycle_days_passed",
-                                        "type": "integer",
-                                    },
-                                    "cycle_days_total": {
-                                        "python": "cycle_days_total",
-                                        "type": "integer",
-                                    },
-                                    "cycle_passed_percent": {
-                                        "python": "cycle_passed_percent",
-                                        "type": "number",
-                                    },
-                                },
-                                "allOf": [{"ref": "CommerceProrationDiscountResponse"}],
-                            },
-                            "total": {"python": "total", "ref": "CommerceMoneyResponse"},
-                        },
-                        "allOf": [{"ref": "CommerceDiscountsResponse"}],
-                    },
-                },
-                "allOf": [{"ref": "CommerceTotalsResponse"}],
-            },
+            "totals": {"python": "totals", "ref": "CommerceTotalsResponse"},
         },
     },
     "CommercePayerResponse": {
@@ -1882,24 +1475,7 @@ _SCHEMAS: dict[str, Any] = {
         "type": "object",
         "required": ["proration", "total"],
         "properties": {
-            "proration": {
-                "python": "proration",
-                "type": "object",
-                "nullable": True,
-                "required": [
-                    "amount",
-                    "cycle_days_passed",
-                    "cycle_days_total",
-                    "cycle_passed_percent",
-                ],
-                "properties": {
-                    "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
-                    "cycle_days_passed": {"python": "cycle_days_passed", "type": "integer"},
-                    "cycle_days_total": {"python": "cycle_days_total", "type": "integer"},
-                    "cycle_passed_percent": {"python": "cycle_passed_percent", "type": "number"},
-                },
-                "allOf": [{"ref": "BillingProrationDiscountDetail"}],
-            },
+            "proration": {"python": "proration", "ref": "BillingProrationDiscountDetail"},
             "total": {"python": "total", "ref": "CommerceMoneyResponse"},
         },
     },
@@ -1916,85 +1492,8 @@ _SCHEMAS: dict[str, Any] = {
                 "type": "array",
                 "items": {"ref": "CommercePerUnitTotal2"},
             },
-            "credits": {
-                "python": "credits",
-                "nullable": True,
-                "required": ["proration", "payer", "total"],
-                "properties": {
-                    "proration": {
-                        "python": "proration",
-                        "nullable": True,
-                        "required": [
-                            "amount",
-                            "cycle_days_remaining",
-                            "cycle_days_total",
-                            "cycle_remaining_percent",
-                        ],
-                        "properties": {
-                            "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
-                            "cycle_days_remaining": {
-                                "python": "cycle_days_remaining",
-                                "type": "integer",
-                            },
-                            "cycle_days_total": {"python": "cycle_days_total", "type": "integer"},
-                            "cycle_remaining_percent": {
-                                "python": "cycle_remaining_percent",
-                                "type": "number",
-                            },
-                        },
-                        "allOf": [{"ref": "CommerceProrationCreditDetailResponse"}],
-                    },
-                    "payer": {
-                        "python": "payer",
-                        "nullable": True,
-                        "required": ["remaining_balance", "applied_amount"],
-                        "properties": {
-                            "remaining_balance": {
-                                "python": "remaining_balance",
-                                "ref": "CommerceMoneyResponse",
-                            },
-                            "applied_amount": {
-                                "python": "applied_amount",
-                                "ref": "CommerceMoneyResponse",
-                            },
-                        },
-                        "allOf": [{"ref": "CommercePayerCreditResponse"}],
-                    },
-                    "total": {"python": "total", "ref": "CommerceMoneyResponse"},
-                },
-                "allOf": [{"ref": "CommerceCreditsResponse"}],
-            },
-            "discounts": {
-                "python": "discounts",
-                "type": "object",
-                "nullable": True,
-                "required": ["proration", "total"],
-                "properties": {
-                    "proration": {
-                        "python": "proration",
-                        "type": "object",
-                        "nullable": True,
-                        "required": [
-                            "amount",
-                            "cycle_days_passed",
-                            "cycle_days_total",
-                            "cycle_passed_percent",
-                        ],
-                        "properties": {
-                            "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
-                            "cycle_days_passed": {"python": "cycle_days_passed", "type": "integer"},
-                            "cycle_days_total": {"python": "cycle_days_total", "type": "integer"},
-                            "cycle_passed_percent": {
-                                "python": "cycle_passed_percent",
-                                "type": "number",
-                            },
-                        },
-                        "allOf": [{"ref": "BillingProrationDiscountDetail"}],
-                    },
-                    "total": {"python": "total", "ref": "CommerceMoneyResponse"},
-                },
-                "allOf": [{"ref": "BillingDiscountsResponse"}],
-            },
+            "credits": {"python": "credits", "ref": "CommerceCreditsResponse"},
+            "discounts": {"python": "discounts", "ref": "BillingDiscountsResponse"},
         },
     },
     "CommerceSubscriptionItem": {
@@ -2020,285 +1519,16 @@ _SCHEMAS: dict[str, Any] = {
             "instance_id": {"python": "instance_id", "type": "string"},
             "status": {"python": "status", "type": "string"},
             "credit": {"python": "credit", "ref": "CommerceSubscriptionCreditResponse"},
-            "credits": {
-                "python": "credits",
-                "nullable": True,
-                "required": ["proration", "payer", "total"],
-                "properties": {
-                    "proration": {
-                        "python": "proration",
-                        "nullable": True,
-                        "required": [
-                            "amount",
-                            "cycle_days_remaining",
-                            "cycle_days_total",
-                            "cycle_remaining_percent",
-                        ],
-                        "properties": {
-                            "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
-                            "cycle_days_remaining": {
-                                "python": "cycle_days_remaining",
-                                "type": "integer",
-                            },
-                            "cycle_days_total": {"python": "cycle_days_total", "type": "integer"},
-                            "cycle_remaining_percent": {
-                                "python": "cycle_remaining_percent",
-                                "type": "number",
-                            },
-                        },
-                        "allOf": [{"ref": "CommerceProrationCreditDetailResponse"}],
-                    },
-                    "payer": {
-                        "python": "payer",
-                        "nullable": True,
-                        "required": ["remaining_balance", "applied_amount"],
-                        "properties": {
-                            "remaining_balance": {
-                                "python": "remaining_balance",
-                                "ref": "CommerceMoneyResponse",
-                            },
-                            "applied_amount": {
-                                "python": "applied_amount",
-                                "ref": "CommerceMoneyResponse",
-                            },
-                        },
-                        "allOf": [{"ref": "CommercePayerCreditResponse"}],
-                    },
-                    "total": {"python": "total", "ref": "CommerceMoneyResponse"},
-                },
-                "allOf": [{"ref": "CommerceCreditsResponse"}],
-            },
+            "credits": {"python": "credits", "ref": "CommerceCreditsResponse"},
             "plan_id": {"python": "plan_id", "type": "string", "nullable": True},
             "price_id": {"python": "price_id", "type": "string"},
-            "plan": {
-                "python": "plan",
-                "nullable": True,
-                "required": [
-                    "object",
-                    "id",
-                    "name",
-                    "fee",
-                    "annual_monthly_fee",
-                    "annual_fee",
-                    "description",
-                    "product_id",
-                    "is_default",
-                    "is_recurring",
-                    "publicly_visible",
-                    "has_base_fee",
-                    "for_payer_type",
-                    "slug",
-                    "avatar_url",
-                    "free_trial_enabled",
-                    "free_trial_days",
-                ],
-                "properties": {
-                    "object": {"python": "object", "type": "string"},
-                    "id": {"python": "id", "type": "string"},
-                    "name": {"python": "name", "type": "string"},
-                    "fee": {
-                        "python": "fee",
-                        "nullable": True,
-                        "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                        "properties": {
-                            "amount": {"python": "amount", "type": "integer"},
-                            "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                            "currency": {"python": "currency", "type": "string"},
-                            "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                        },
-                        "allOf": [{"ref": "CommerceMoneyResponse"}],
-                    },
-                    "annual_monthly_fee": {
-                        "python": "annual_monthly_fee",
-                        "nullable": True,
-                        "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                        "properties": {
-                            "amount": {"python": "amount", "type": "integer"},
-                            "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                            "currency": {"python": "currency", "type": "string"},
-                            "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                        },
-                        "allOf": [{"ref": "CommerceMoneyResponse"}],
-                    },
-                    "annual_fee": {
-                        "python": "annual_fee",
-                        "nullable": True,
-                        "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                        "properties": {
-                            "amount": {"python": "amount", "type": "integer"},
-                            "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                            "currency": {"python": "currency", "type": "string"},
-                            "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                        },
-                        "allOf": [{"ref": "CommerceMoneyResponse"}],
-                    },
-                    "description": {"python": "description", "type": "string", "nullable": True},
-                    "product_id": {"python": "product_id", "type": "string"},
-                    "is_default": {"python": "is_default", "type": "boolean"},
-                    "is_recurring": {"python": "is_recurring", "type": "boolean"},
-                    "publicly_visible": {"python": "publicly_visible", "type": "boolean"},
-                    "has_base_fee": {"python": "has_base_fee", "type": "boolean"},
-                    "for_payer_type": {"python": "for_payer_type", "type": "string"},
-                    "slug": {"python": "slug", "type": "string"},
-                    "avatar_url": {"python": "avatar_url", "type": "string", "nullable": True},
-                    "features": {
-                        "python": "features",
-                        "type": "array",
-                        "items": {"ref": "FeatureResponse"},
-                    },
-                    "free_trial_enabled": {"python": "free_trial_enabled", "type": "boolean"},
-                    "free_trial_days": {
-                        "python": "free_trial_days",
-                        "type": "integer",
-                        "nullable": True,
-                    },
-                    "unit_prices": {
-                        "python": "unit_prices",
-                        "type": "array",
-                        "items": {"ref": "CommercePlanUnitPrice"},
-                    },
-                },
-                "allOf": [{"ref": "CommercePlan"}],
-            },
+            "plan": {"python": "plan", "ref": "CommercePlan"},
             "plan_period": {"python": "plan_period", "type": "string"},
             "payment_method": {"python": "payment_method", "ref": "CommercePaymentMethodResponse"},
             "lifetime_paid": {"python": "lifetime_paid", "ref": "CommerceMoneyResponse"},
             "next_payment": {
                 "python": "next_payment",
-                "nullable": True,
-                "properties": {
-                    "amount": {
-                        "python": "amount",
-                        "nullable": True,
-                        "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                        "properties": {
-                            "amount": {"python": "amount", "type": "integer"},
-                            "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                            "currency": {"python": "currency", "type": "string"},
-                            "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                        },
-                        "allOf": [{"ref": "CommerceMoneyResponse"}],
-                    },
-                    "date": {"python": "date", "type": "integer", "nullable": True},
-                    "per_unit_totals": {
-                        "python": "per_unit_totals",
-                        "type": "array",
-                        "items": {"ref": "CommercePerUnitTotal"},
-                    },
-                    "totals": {
-                        "python": "totals",
-                        "nullable": True,
-                        "required": ["subtotal", "base_fee", "tax_total", "grand_total"],
-                        "properties": {
-                            "subtotal": {"python": "subtotal", "ref": "CommerceMoneyResponse"},
-                            "base_fee": {"python": "base_fee", "ref": "CommerceMoneyResponse"},
-                            "tax_total": {"python": "tax_total", "ref": "CommerceMoneyResponse"},
-                            "grand_total": {
-                                "python": "grand_total",
-                                "ref": "CommerceMoneyResponse",
-                            },
-                            "per_unit_totals": {
-                                "python": "per_unit_totals",
-                                "type": "array",
-                                "items": {"ref": "CommercePerUnitTotal"},
-                            },
-                            "credits": {
-                                "python": "credits",
-                                "nullable": True,
-                                "required": ["proration", "payer", "total"],
-                                "properties": {
-                                    "proration": {
-                                        "python": "proration",
-                                        "nullable": True,
-                                        "required": [
-                                            "amount",
-                                            "cycle_days_remaining",
-                                            "cycle_days_total",
-                                            "cycle_remaining_percent",
-                                        ],
-                                        "properties": {
-                                            "amount": {
-                                                "python": "amount",
-                                                "ref": "CommerceMoneyResponse",
-                                            },
-                                            "cycle_days_remaining": {
-                                                "python": "cycle_days_remaining",
-                                                "type": "integer",
-                                            },
-                                            "cycle_days_total": {
-                                                "python": "cycle_days_total",
-                                                "type": "integer",
-                                            },
-                                            "cycle_remaining_percent": {
-                                                "python": "cycle_remaining_percent",
-                                                "type": "number",
-                                            },
-                                        },
-                                        "allOf": [{"ref": "CommerceProrationCreditDetailResponse"}],
-                                    },
-                                    "payer": {
-                                        "python": "payer",
-                                        "nullable": True,
-                                        "required": ["remaining_balance", "applied_amount"],
-                                        "properties": {
-                                            "remaining_balance": {
-                                                "python": "remaining_balance",
-                                                "ref": "CommerceMoneyResponse",
-                                            },
-                                            "applied_amount": {
-                                                "python": "applied_amount",
-                                                "ref": "CommerceMoneyResponse",
-                                            },
-                                        },
-                                        "allOf": [{"ref": "CommercePayerCreditResponse"}],
-                                    },
-                                    "total": {"python": "total", "ref": "CommerceMoneyResponse"},
-                                },
-                                "allOf": [{"ref": "CommerceCreditsResponse"}],
-                            },
-                            "discounts": {
-                                "python": "discounts",
-                                "nullable": True,
-                                "required": ["proration", "total"],
-                                "properties": {
-                                    "proration": {
-                                        "python": "proration",
-                                        "nullable": True,
-                                        "required": [
-                                            "amount",
-                                            "cycle_days_passed",
-                                            "cycle_days_total",
-                                            "cycle_passed_percent",
-                                        ],
-                                        "properties": {
-                                            "amount": {
-                                                "python": "amount",
-                                                "ref": "CommerceMoneyResponse",
-                                            },
-                                            "cycle_days_passed": {
-                                                "python": "cycle_days_passed",
-                                                "type": "integer",
-                                            },
-                                            "cycle_days_total": {
-                                                "python": "cycle_days_total",
-                                                "type": "integer",
-                                            },
-                                            "cycle_passed_percent": {
-                                                "python": "cycle_passed_percent",
-                                                "type": "number",
-                                            },
-                                        },
-                                        "allOf": [{"ref": "CommerceProrationDiscountResponse"}],
-                                    },
-                                    "total": {"python": "total", "ref": "CommerceMoneyResponse"},
-                                },
-                                "allOf": [{"ref": "CommerceDiscountsResponse"}],
-                            },
-                        },
-                        "allOf": [{"ref": "CommerceTotalsResponse"}],
-                    },
-                },
-                "allOf": [{"ref": "CommerceSubscriptionItemNextPaymentResponse"}],
+                "ref": "CommerceSubscriptionItemNextPaymentResponse",
             },
             "payer_id": {"python": "payer_id", "type": "string"},
             "payer": {"python": "payer", "ref": "CommercePayerResponse"},
@@ -2311,125 +1541,8 @@ _SCHEMAS: dict[str, Any] = {
             "ended_at": {"python": "ended_at", "type": "integer", "nullable": True},
             "created_at": {"python": "created_at", "type": "integer"},
             "updated_at": {"python": "updated_at", "type": "integer"},
-            "seats": {
-                "python": "seats",
-                "nullable": True,
-                "required": ["quantity"],
-                "properties": {
-                    "quantity": {"python": "quantity", "type": "integer", "nullable": True},
-                    "tiers": {
-                        "python": "tiers",
-                        "type": "array",
-                        "items": {"ref": "CommercePerUnitTotalTier2"},
-                    },
-                },
-                "allOf": [{"ref": "CommerceSubscriptionItemSeatsResponse"}],
-            },
-            "totals": {
-                "python": "totals",
-                "nullable": True,
-                "required": ["subtotal", "base_fee", "tax_total", "grand_total"],
-                "properties": {
-                    "subtotal": {"python": "subtotal", "ref": "CommerceMoneyResponse"},
-                    "base_fee": {"python": "base_fee", "ref": "CommerceMoneyResponse"},
-                    "tax_total": {"python": "tax_total", "ref": "CommerceMoneyResponse"},
-                    "grand_total": {"python": "grand_total", "ref": "CommerceMoneyResponse"},
-                    "per_unit_totals": {
-                        "python": "per_unit_totals",
-                        "type": "array",
-                        "items": {"ref": "CommercePerUnitTotal2"},
-                    },
-                    "credits": {
-                        "python": "credits",
-                        "nullable": True,
-                        "required": ["proration", "payer", "total"],
-                        "properties": {
-                            "proration": {
-                                "python": "proration",
-                                "nullable": True,
-                                "required": [
-                                    "amount",
-                                    "cycle_days_remaining",
-                                    "cycle_days_total",
-                                    "cycle_remaining_percent",
-                                ],
-                                "properties": {
-                                    "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
-                                    "cycle_days_remaining": {
-                                        "python": "cycle_days_remaining",
-                                        "type": "integer",
-                                    },
-                                    "cycle_days_total": {
-                                        "python": "cycle_days_total",
-                                        "type": "integer",
-                                    },
-                                    "cycle_remaining_percent": {
-                                        "python": "cycle_remaining_percent",
-                                        "type": "number",
-                                    },
-                                },
-                                "allOf": [{"ref": "CommerceProrationCreditDetailResponse"}],
-                            },
-                            "payer": {
-                                "python": "payer",
-                                "nullable": True,
-                                "required": ["remaining_balance", "applied_amount"],
-                                "properties": {
-                                    "remaining_balance": {
-                                        "python": "remaining_balance",
-                                        "ref": "CommerceMoneyResponse",
-                                    },
-                                    "applied_amount": {
-                                        "python": "applied_amount",
-                                        "ref": "CommerceMoneyResponse",
-                                    },
-                                },
-                                "allOf": [{"ref": "CommercePayerCreditResponse"}],
-                            },
-                            "total": {"python": "total", "ref": "CommerceMoneyResponse"},
-                        },
-                        "allOf": [{"ref": "CommerceCreditsResponse"}],
-                    },
-                    "discounts": {
-                        "python": "discounts",
-                        "type": "object",
-                        "nullable": True,
-                        "required": ["proration", "total"],
-                        "properties": {
-                            "proration": {
-                                "python": "proration",
-                                "type": "object",
-                                "nullable": True,
-                                "required": [
-                                    "amount",
-                                    "cycle_days_passed",
-                                    "cycle_days_total",
-                                    "cycle_passed_percent",
-                                ],
-                                "properties": {
-                                    "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
-                                    "cycle_days_passed": {
-                                        "python": "cycle_days_passed",
-                                        "type": "integer",
-                                    },
-                                    "cycle_days_total": {
-                                        "python": "cycle_days_total",
-                                        "type": "integer",
-                                    },
-                                    "cycle_passed_percent": {
-                                        "python": "cycle_passed_percent",
-                                        "type": "number",
-                                    },
-                                },
-                                "allOf": [{"ref": "BillingProrationDiscountDetail"}],
-                            },
-                            "total": {"python": "total", "ref": "CommerceMoneyResponse"},
-                        },
-                        "allOf": [{"ref": "BillingDiscountsResponse"}],
-                    },
-                },
-                "allOf": [{"ref": "CommerceTotalsResponse2"}],
-            },
+            "seats": {"python": "seats", "ref": "CommerceSubscriptionItemSeatsResponse"},
+            "totals": {"python": "totals", "ref": "CommerceTotalsResponse2"},
         },
     },
     "CommerceSubscriptionNextPayment": {
@@ -2443,111 +1556,7 @@ _SCHEMAS: dict[str, Any] = {
                 "type": "array",
                 "items": {"ref": "CommercePerUnitTotal2"},
             },
-            "totals": {
-                "python": "totals",
-                "nullable": True,
-                "required": ["subtotal", "base_fee", "tax_total", "grand_total"],
-                "properties": {
-                    "subtotal": {"python": "subtotal", "ref": "CommerceMoneyResponse"},
-                    "base_fee": {"python": "base_fee", "ref": "CommerceMoneyResponse"},
-                    "tax_total": {"python": "tax_total", "ref": "CommerceMoneyResponse"},
-                    "grand_total": {"python": "grand_total", "ref": "CommerceMoneyResponse"},
-                    "per_unit_totals": {
-                        "python": "per_unit_totals",
-                        "type": "array",
-                        "items": {"ref": "CommercePerUnitTotal2"},
-                    },
-                    "credits": {
-                        "python": "credits",
-                        "nullable": True,
-                        "required": ["proration", "payer", "total"],
-                        "properties": {
-                            "proration": {
-                                "python": "proration",
-                                "nullable": True,
-                                "required": [
-                                    "amount",
-                                    "cycle_days_remaining",
-                                    "cycle_days_total",
-                                    "cycle_remaining_percent",
-                                ],
-                                "properties": {
-                                    "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
-                                    "cycle_days_remaining": {
-                                        "python": "cycle_days_remaining",
-                                        "type": "integer",
-                                    },
-                                    "cycle_days_total": {
-                                        "python": "cycle_days_total",
-                                        "type": "integer",
-                                    },
-                                    "cycle_remaining_percent": {
-                                        "python": "cycle_remaining_percent",
-                                        "type": "number",
-                                    },
-                                },
-                                "allOf": [{"ref": "CommerceProrationCreditDetailResponse"}],
-                            },
-                            "payer": {
-                                "python": "payer",
-                                "nullable": True,
-                                "required": ["remaining_balance", "applied_amount"],
-                                "properties": {
-                                    "remaining_balance": {
-                                        "python": "remaining_balance",
-                                        "ref": "CommerceMoneyResponse",
-                                    },
-                                    "applied_amount": {
-                                        "python": "applied_amount",
-                                        "ref": "CommerceMoneyResponse",
-                                    },
-                                },
-                                "allOf": [{"ref": "CommercePayerCreditResponse"}],
-                            },
-                            "total": {"python": "total", "ref": "CommerceMoneyResponse"},
-                        },
-                        "allOf": [{"ref": "CommerceCreditsResponse"}],
-                    },
-                    "discounts": {
-                        "python": "discounts",
-                        "type": "object",
-                        "nullable": True,
-                        "required": ["proration", "total"],
-                        "properties": {
-                            "proration": {
-                                "python": "proration",
-                                "type": "object",
-                                "nullable": True,
-                                "required": [
-                                    "amount",
-                                    "cycle_days_passed",
-                                    "cycle_days_total",
-                                    "cycle_passed_percent",
-                                ],
-                                "properties": {
-                                    "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
-                                    "cycle_days_passed": {
-                                        "python": "cycle_days_passed",
-                                        "type": "integer",
-                                    },
-                                    "cycle_days_total": {
-                                        "python": "cycle_days_total",
-                                        "type": "integer",
-                                    },
-                                    "cycle_passed_percent": {
-                                        "python": "cycle_passed_percent",
-                                        "type": "number",
-                                    },
-                                },
-                                "allOf": [{"ref": "BillingProrationDiscountDetail"}],
-                            },
-                            "total": {"python": "total", "ref": "CommerceMoneyResponse"},
-                        },
-                        "allOf": [{"ref": "BillingDiscountsResponse"}],
-                    },
-                },
-                "allOf": [{"ref": "CommerceTotalsResponse2"}],
-            },
+            "totals": {"python": "totals", "ref": "CommerceTotalsResponse2"},
         },
     },
     "CommerceSubscription": {
@@ -2588,18 +1597,7 @@ _SCHEMAS: dict[str, Any] = {
         "required": ["object", "balance"],
         "properties": {
             "object": {"python": "object", "type": "string"},
-            "balance": {
-                "python": "balance",
-                "nullable": True,
-                "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                "properties": {
-                    "amount": {"python": "amount", "type": "integer"},
-                    "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                    "currency": {"python": "currency", "type": "string"},
-                    "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                },
-                "allOf": [{"ref": "CommerceMoneyResponse"}],
-            },
+            "balance": {"python": "balance", "ref": "CommerceMoneyResponse"},
         },
     },
     "AdjustCreditBalanceRequest": {
@@ -2738,6 +1736,7 @@ _SCHEMAS: dict[str, Any] = {
         },
         "allOf": [
             {
+                "type": "object",
                 "properties": {
                     "object": {"python": "object", "type": "string"},
                     "id": {"python": "id", "type": "string"},
@@ -2757,15 +1756,16 @@ _SCHEMAS: dict[str, Any] = {
                     "expires_at": {"python": "expires_at", "type": "integer", "nullable": True},
                     "created_at": {"python": "created_at", "type": "integer"},
                     "updated_at": {"python": "updated_at", "type": "integer"},
-                }
+                },
             },
             {
+                "type": "object",
                 "properties": {
                     "public_organization_data": {
                         "python": "public_organization_data",
                         "ref": "OrganizationInvitationPublicOrganizationData",
                     }
-                }
+                },
             },
         ],
     },
@@ -3457,61 +2457,18 @@ _SCHEMAS: dict[str, Any] = {
             },
             "affiliation_verification": {
                 "python": "affiliation_verification",
-                "type": "object",
-                "nullable": True,
-                "required": ["status", "strategy", "attempts", "expire_at", "verified_at"],
-                "properties": {
-                    "status": {"python": "status", "type": "string"},
-                    "strategy": {"python": "strategy", "type": "string"},
-                    "attempts": {"python": "attempts", "type": "integer", "nullable": True},
-                    "expire_at": {"python": "expire_at", "type": "integer", "nullable": True},
-                    "verified_at": {"python": "verified_at", "type": "integer", "nullable": True},
-                },
-                "allOf": [{"ref": "OrganizationDomainVerification"}],
+                "ref": "OrganizationDomainVerification",
             },
             "ownership_verification": {
                 "python": "ownership_verification",
-                "type": "object",
-                "nullable": True,
-                "required": ["status", "strategy", "attempts", "expire_at", "verified_at"],
-                "properties": {
-                    "status": {"python": "status", "type": "string"},
-                    "strategy": {"python": "strategy", "type": "string"},
-                    "attempts": {"python": "attempts", "type": "integer", "nullable": True},
-                    "expire_at": {"python": "expire_at", "type": "integer", "nullable": True},
-                    "verified_at": {"python": "verified_at", "type": "integer", "nullable": True},
-                },
-                "allOf": [{"ref": "OrganizationDomainVerification"}],
+                "ref": "OrganizationDomainVerification",
             },
-            "verification": {
-                "python": "verification",
-                "type": "object",
-                "nullable": True,
-                "required": ["status", "strategy", "attempts", "expire_at", "verified_at"],
-                "properties": {
-                    "status": {"python": "status", "type": "string"},
-                    "strategy": {"python": "strategy", "type": "string"},
-                    "attempts": {"python": "attempts", "type": "integer", "nullable": True},
-                    "expire_at": {"python": "expire_at", "type": "integer", "nullable": True},
-                    "verified_at": {"python": "verified_at", "type": "integer", "nullable": True},
-                },
-                "allOf": [{"ref": "OrganizationDomainVerification"}],
-            },
+            "verification": {"python": "verification", "ref": "OrganizationDomainVerification"},
             "total_pending_invitations": {"python": "total_pending_invitations", "type": "integer"},
             "total_pending_suggestions": {"python": "total_pending_suggestions", "type": "integer"},
             "public_organization_data": {
                 "python": "public_organization_data",
-                "type": "object",
-                "nullable": True,
-                "required": ["id", "name", "slug", "has_image"],
-                "properties": {
-                    "id": {"python": "id", "type": "string"},
-                    "name": {"python": "name", "type": "string"},
-                    "slug": {"python": "slug", "type": "string"},
-                    "image_url": {"python": "image_url", "type": "string"},
-                    "has_image": {"python": "has_image", "type": "boolean"},
-                },
-                "allOf": [{"ref": "OrganizationInvitationPublicOrganizationData"}],
+                "ref": "OrganizationInvitationPublicOrganizationData",
             },
             "created_at": {"python": "created_at", "type": "integer"},
             "updated_at": {"python": "updated_at", "type": "integer"},
@@ -3924,7 +2881,6 @@ _SCHEMAS: dict[str, Any] = {
             "created_at": {"python": "created_at", "type": "integer"},
             "updated_at": {"python": "updated_at", "type": "integer"},
         },
-        "anyOf": [{"required": ["domain"]}, {"required": ["domains"]}],
     },
     "SAMLConnections": {
         "type": "object",
@@ -4241,37 +3197,7 @@ _SCHEMAS: dict[str, Any] = {
             "is_locked": {"python": "is_locked", "type": "boolean"},
             "created_at": {"python": "created_at", "type": "integer"},
             "updated_at": {"python": "updated_at", "type": "integer"},
-            "invitation": {
-                "python": "invitation",
-                "type": "object",
-                "nullable": True,
-                "required": [
-                    "object",
-                    "id",
-                    "email_address",
-                    "public_metadata",
-                    "status",
-                    "created_at",
-                    "updated_at",
-                ],
-                "properties": {
-                    "object": {"python": "object", "type": "string"},
-                    "id": {"python": "id", "type": "string"},
-                    "email_address": {
-                        "python": "email_address",
-                        "type": "string",
-                        "format": "email",
-                    },
-                    "public_metadata": {"python": "public_metadata", "type": "object"},
-                    "revoked": {"python": "revoked", "type": "boolean"},
-                    "status": {"python": "status", "type": "string"},
-                    "url": {"python": "url", "type": "string"},
-                    "expires_at": {"python": "expires_at", "type": "integer", "nullable": True},
-                    "created_at": {"python": "created_at", "type": "integer"},
-                    "updated_at": {"python": "updated_at", "type": "integer"},
-                },
-                "allOf": [{"ref": "Invitation"}],
-            },
+            "invitation": {"python": "invitation", "ref": "Invitation"},
         },
     },
     "PaginatedCommercePlanResponse": {
@@ -4308,30 +3234,8 @@ _SCHEMAS: dict[str, Any] = {
             "currency_symbol": {"python": "currency_symbol", "type": "string"},
             "amount": {"python": "amount", "type": "integer"},
             "annual_monthly_amount": {"python": "annual_monthly_amount", "type": "integer"},
-            "fee": {
-                "python": "fee",
-                "nullable": True,
-                "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                "properties": {
-                    "amount": {"python": "amount", "type": "integer"},
-                    "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                    "currency": {"python": "currency", "type": "string"},
-                    "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                },
-                "allOf": [{"ref": "CommerceMoneyResponse"}],
-            },
-            "annual_monthly_fee": {
-                "python": "annual_monthly_fee",
-                "nullable": True,
-                "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                "properties": {
-                    "amount": {"python": "amount", "type": "integer"},
-                    "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                    "currency": {"python": "currency", "type": "string"},
-                    "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                },
-                "allOf": [{"ref": "CommerceMoneyResponse"}],
-            },
+            "fee": {"python": "fee", "ref": "CommerceMoneyResponse"},
+            "annual_monthly_fee": {"python": "annual_monthly_fee", "ref": "CommerceMoneyResponse"},
             "description": {"python": "description", "type": "string", "nullable": True},
             "is_default": {"python": "is_default", "type": "boolean"},
             "created_at": {"python": "created_at", "type": "integer"},
@@ -4426,42 +3330,9 @@ _SCHEMAS: dict[str, Any] = {
             "object": {"python": "object", "type": "string"},
             "id": {"python": "id", "type": "string"},
             "name": {"python": "name", "type": "string"},
-            "fee": {
-                "python": "fee",
-                "nullable": True,
-                "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                "properties": {
-                    "amount": {"python": "amount", "type": "integer"},
-                    "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                    "currency": {"python": "currency", "type": "string"},
-                    "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                },
-                "allOf": [{"ref": "CommerceMoneyResponse"}],
-            },
-            "annual_monthly_fee": {
-                "python": "annual_monthly_fee",
-                "nullable": True,
-                "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                "properties": {
-                    "amount": {"python": "amount", "type": "integer"},
-                    "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                    "currency": {"python": "currency", "type": "string"},
-                    "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                },
-                "allOf": [{"ref": "CommerceMoneyResponse"}],
-            },
-            "annual_fee": {
-                "python": "annual_fee",
-                "nullable": True,
-                "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                "properties": {
-                    "amount": {"python": "amount", "type": "integer"},
-                    "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                    "currency": {"python": "currency", "type": "string"},
-                    "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                },
-                "allOf": [{"ref": "CommerceMoneyResponse"}],
-            },
+            "fee": {"python": "fee", "ref": "CommerceMoneyResponse"},
+            "annual_monthly_fee": {"python": "annual_monthly_fee", "ref": "CommerceMoneyResponse"},
+            "annual_fee": {"python": "annual_fee", "ref": "CommerceMoneyResponse"},
             "amount": {"python": "amount", "type": "integer"},
             "amount_formatted": {"python": "amount_formatted", "type": "string"},
             "annual_monthly_amount": {"python": "annual_monthly_amount", "type": "integer"},
@@ -4585,522 +3456,25 @@ _SCHEMAS: dict[str, Any] = {
             "id": {"python": "id", "type": "string"},
             "instance_id": {"python": "instance_id", "type": "string"},
             "status": {"python": "status", "type": "string"},
-            "credit": {
-                "python": "credit",
-                "nullable": True,
-                "properties": {
-                    "amount": {
-                        "python": "amount",
-                        "nullable": True,
-                        "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                        "properties": {
-                            "amount": {"python": "amount", "type": "integer"},
-                            "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                            "currency": {"python": "currency", "type": "string"},
-                            "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                        },
-                        "allOf": [{"ref": "CommerceMoneyResponse"}],
-                    },
-                    "cycle_remaining_percent": {
-                        "python": "cycle_remaining_percent",
-                        "type": "number",
-                    },
-                },
-                "allOf": [{"ref": "CommerceSubscriptionCreditResponse"}],
-            },
+            "credit": {"python": "credit", "ref": "CommerceSubscriptionCreditResponse"},
             "plan_id": {"python": "plan_id", "type": "string"},
             "price_id": {"python": "price_id", "type": "string"},
-            "plan": {
-                "python": "plan",
-                "nullable": True,
-                "required": [
-                    "object",
-                    "id",
-                    "name",
-                    "fee",
-                    "annual_monthly_fee",
-                    "annual_fee",
-                    "amount",
-                    "amount_formatted",
-                    "annual_monthly_amount",
-                    "annual_monthly_amount_formatted",
-                    "annual_amount",
-                    "annual_amount_formatted",
-                    "currency_symbol",
-                    "currency",
-                    "description",
-                    "product_id",
-                    "is_default",
-                    "is_recurring",
-                    "publicly_visible",
-                    "has_base_fee",
-                    "payer_type",
-                    "for_payer_type",
-                    "slug",
-                    "avatar_url",
-                    "features",
-                ],
-                "properties": {
-                    "object": {"python": "object", "type": "string"},
-                    "id": {"python": "id", "type": "string"},
-                    "name": {"python": "name", "type": "string"},
-                    "fee": {
-                        "python": "fee",
-                        "nullable": True,
-                        "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                        "properties": {
-                            "amount": {"python": "amount", "type": "integer"},
-                            "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                            "currency": {"python": "currency", "type": "string"},
-                            "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                        },
-                        "allOf": [{"ref": "CommerceMoneyResponse"}],
-                    },
-                    "annual_monthly_fee": {
-                        "python": "annual_monthly_fee",
-                        "nullable": True,
-                        "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                        "properties": {
-                            "amount": {"python": "amount", "type": "integer"},
-                            "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                            "currency": {"python": "currency", "type": "string"},
-                            "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                        },
-                        "allOf": [{"ref": "CommerceMoneyResponse"}],
-                    },
-                    "annual_fee": {
-                        "python": "annual_fee",
-                        "nullable": True,
-                        "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                        "properties": {
-                            "amount": {"python": "amount", "type": "integer"},
-                            "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                            "currency": {"python": "currency", "type": "string"},
-                            "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                        },
-                        "allOf": [{"ref": "CommerceMoneyResponse"}],
-                    },
-                    "amount": {"python": "amount", "type": "integer"},
-                    "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                    "annual_monthly_amount": {"python": "annual_monthly_amount", "type": "integer"},
-                    "annual_monthly_amount_formatted": {
-                        "python": "annual_monthly_amount_formatted",
-                        "type": "string",
-                    },
-                    "annual_amount": {"python": "annual_amount", "type": "integer"},
-                    "annual_amount_formatted": {
-                        "python": "annual_amount_formatted",
-                        "type": "string",
-                    },
-                    "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                    "currency": {"python": "currency", "type": "string"},
-                    "description": {"python": "description", "type": "string"},
-                    "product_id": {"python": "product_id", "type": "string"},
-                    "is_default": {"python": "is_default", "type": "boolean"},
-                    "is_recurring": {"python": "is_recurring", "type": "boolean"},
-                    "publicly_visible": {"python": "publicly_visible", "type": "boolean"},
-                    "has_base_fee": {"python": "has_base_fee", "type": "boolean"},
-                    "payer_type": {
-                        "python": "payer_type",
-                        "type": "array",
-                        "items": {"type": "string"},
-                    },
-                    "for_payer_type": {"python": "for_payer_type", "type": "string"},
-                    "slug": {"python": "slug", "type": "string"},
-                    "avatar_url": {"python": "avatar_url", "type": "string"},
-                    "period": {"python": "period", "type": "string"},
-                    "interval": {"python": "interval", "type": "integer"},
-                    "features": {
-                        "python": "features",
-                        "type": "array",
-                        "items": {"ref": "FeatureResponse2"},
-                    },
-                    "free_trial_enabled": {"python": "free_trial_enabled", "type": "boolean"},
-                    "free_trial_days": {
-                        "python": "free_trial_days",
-                        "type": "integer",
-                        "nullable": True,
-                    },
-                },
-                "allOf": [{"ref": "CommercePlan2"}],
-            },
+            "plan": {"python": "plan", "ref": "CommercePlan2"},
             "plan_period": {"python": "plan_period", "type": "string"},
             "payment_source_id": {"python": "payment_source_id", "type": "string"},
-            "payment_source": {
-                "python": "payment_source",
-                "nullable": True,
-                "required": [
-                    "object",
-                    "id",
-                    "payer_id",
-                    "payment_method",
-                    "gateway",
-                    "gateway_external_id",
-                    "last4",
-                    "status",
-                    "wallet_type",
-                    "card_type",
-                    "created_at",
-                    "updated_at",
-                ],
-                "properties": {
-                    "object": {"python": "object", "type": "string"},
-                    "id": {"python": "id", "type": "string"},
-                    "payer_id": {"python": "payer_id", "type": "string"},
-                    "payment_method": {"python": "payment_method", "type": "string"},
-                    "is_default": {"python": "is_default", "type": "boolean", "nullable": True},
-                    "gateway": {"python": "gateway", "type": "string"},
-                    "gateway_external_id": {"python": "gateway_external_id", "type": "string"},
-                    "gateway_external_account_id": {
-                        "python": "gateway_external_account_id",
-                        "type": "string",
-                        "nullable": True,
-                    },
-                    "last4": {"python": "last4", "type": "string"},
-                    "status": {"python": "status", "type": "string"},
-                    "wallet_type": {"python": "wallet_type", "type": "string"},
-                    "card_type": {"python": "card_type", "type": "string"},
-                    "expiry_year": {"python": "expiry_year", "type": "integer"},
-                    "expiry_month": {"python": "expiry_month", "type": "integer"},
-                    "created_at": {"python": "created_at", "type": "integer"},
-                    "updated_at": {"python": "updated_at", "type": "integer"},
-                    "is_removable": {"python": "is_removable", "type": "boolean", "nullable": True},
-                },
-                "allOf": [{"ref": "CommercePaymentSourceResponse"}],
-            },
-            "lifetime_paid": {
-                "python": "lifetime_paid",
-                "nullable": True,
-                "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                "properties": {
-                    "amount": {"python": "amount", "type": "integer"},
-                    "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                    "currency": {"python": "currency", "type": "string"},
-                    "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                },
-                "allOf": [{"ref": "CommerceMoneyResponse"}],
-            },
-            "amount": {
-                "python": "amount",
-                "nullable": True,
-                "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                "properties": {
-                    "amount": {"python": "amount", "type": "integer"},
-                    "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                    "currency": {"python": "currency", "type": "string"},
-                    "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                },
-                "allOf": [{"ref": "CommerceMoneyResponse"}],
-            },
+            "payment_source": {"python": "payment_source", "ref": "CommercePaymentSourceResponse"},
+            "lifetime_paid": {"python": "lifetime_paid", "ref": "CommerceMoneyResponse"},
+            "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
             "next_invoice": {
                 "python": "next_invoice",
-                "nullable": True,
-                "properties": {
-                    "amount": {
-                        "python": "amount",
-                        "nullable": True,
-                        "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                        "properties": {
-                            "amount": {"python": "amount", "type": "integer"},
-                            "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                            "currency": {"python": "currency", "type": "string"},
-                            "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                        },
-                        "allOf": [{"ref": "CommerceMoneyResponse"}],
-                    },
-                    "date": {"python": "date", "type": "integer", "nullable": True},
-                    "per_unit_totals": {
-                        "python": "per_unit_totals",
-                        "type": "array",
-                        "items": {"ref": "CommercePerUnitTotal"},
-                    },
-                    "totals": {
-                        "python": "totals",
-                        "nullable": True,
-                        "required": ["subtotal", "base_fee", "tax_total", "grand_total"],
-                        "properties": {
-                            "subtotal": {"python": "subtotal", "ref": "CommerceMoneyResponse"},
-                            "base_fee": {"python": "base_fee", "ref": "CommerceMoneyResponse"},
-                            "tax_total": {"python": "tax_total", "ref": "CommerceMoneyResponse"},
-                            "grand_total": {
-                                "python": "grand_total",
-                                "ref": "CommerceMoneyResponse",
-                            },
-                            "per_unit_totals": {
-                                "python": "per_unit_totals",
-                                "type": "array",
-                                "items": {"ref": "CommercePerUnitTotal"},
-                            },
-                            "credits": {
-                                "python": "credits",
-                                "nullable": True,
-                                "required": ["proration", "payer", "total"],
-                                "properties": {
-                                    "proration": {
-                                        "python": "proration",
-                                        "nullable": True,
-                                        "required": [
-                                            "amount",
-                                            "cycle_days_remaining",
-                                            "cycle_days_total",
-                                            "cycle_remaining_percent",
-                                        ],
-                                        "properties": {
-                                            "amount": {
-                                                "python": "amount",
-                                                "ref": "CommerceMoneyResponse",
-                                            },
-                                            "cycle_days_remaining": {
-                                                "python": "cycle_days_remaining",
-                                                "type": "integer",
-                                            },
-                                            "cycle_days_total": {
-                                                "python": "cycle_days_total",
-                                                "type": "integer",
-                                            },
-                                            "cycle_remaining_percent": {
-                                                "python": "cycle_remaining_percent",
-                                                "type": "number",
-                                            },
-                                        },
-                                        "allOf": [{"ref": "CommerceProrationCreditDetailResponse"}],
-                                    },
-                                    "payer": {
-                                        "python": "payer",
-                                        "nullable": True,
-                                        "required": ["remaining_balance", "applied_amount"],
-                                        "properties": {
-                                            "remaining_balance": {
-                                                "python": "remaining_balance",
-                                                "ref": "CommerceMoneyResponse",
-                                            },
-                                            "applied_amount": {
-                                                "python": "applied_amount",
-                                                "ref": "CommerceMoneyResponse",
-                                            },
-                                        },
-                                        "allOf": [{"ref": "CommercePayerCreditResponse"}],
-                                    },
-                                    "total": {"python": "total", "ref": "CommerceMoneyResponse"},
-                                },
-                                "allOf": [{"ref": "CommerceCreditsResponse"}],
-                            },
-                            "discounts": {
-                                "python": "discounts",
-                                "nullable": True,
-                                "required": ["proration", "total"],
-                                "properties": {
-                                    "proration": {
-                                        "python": "proration",
-                                        "nullable": True,
-                                        "required": [
-                                            "amount",
-                                            "cycle_days_passed",
-                                            "cycle_days_total",
-                                            "cycle_passed_percent",
-                                        ],
-                                        "properties": {
-                                            "amount": {
-                                                "python": "amount",
-                                                "ref": "CommerceMoneyResponse",
-                                            },
-                                            "cycle_days_passed": {
-                                                "python": "cycle_days_passed",
-                                                "type": "integer",
-                                            },
-                                            "cycle_days_total": {
-                                                "python": "cycle_days_total",
-                                                "type": "integer",
-                                            },
-                                            "cycle_passed_percent": {
-                                                "python": "cycle_passed_percent",
-                                                "type": "number",
-                                            },
-                                        },
-                                        "allOf": [{"ref": "CommerceProrationDiscountResponse"}],
-                                    },
-                                    "total": {"python": "total", "ref": "CommerceMoneyResponse"},
-                                },
-                                "allOf": [{"ref": "CommerceDiscountsResponse"}],
-                            },
-                        },
-                        "allOf": [{"ref": "CommerceTotalsResponse"}],
-                    },
-                },
-                "allOf": [{"ref": "CommerceSubscriptionItemNextPaymentResponse"}],
+                "ref": "CommerceSubscriptionItemNextPaymentResponse",
             },
             "next_payment": {
                 "python": "next_payment",
-                "nullable": True,
-                "properties": {
-                    "amount": {
-                        "python": "amount",
-                        "nullable": True,
-                        "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                        "properties": {
-                            "amount": {"python": "amount", "type": "integer"},
-                            "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                            "currency": {"python": "currency", "type": "string"},
-                            "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                        },
-                        "allOf": [{"ref": "CommerceMoneyResponse"}],
-                    },
-                    "date": {"python": "date", "type": "integer", "nullable": True},
-                    "per_unit_totals": {
-                        "python": "per_unit_totals",
-                        "type": "array",
-                        "items": {"ref": "CommercePerUnitTotal"},
-                    },
-                    "totals": {
-                        "python": "totals",
-                        "nullable": True,
-                        "required": ["subtotal", "base_fee", "tax_total", "grand_total"],
-                        "properties": {
-                            "subtotal": {"python": "subtotal", "ref": "CommerceMoneyResponse"},
-                            "base_fee": {"python": "base_fee", "ref": "CommerceMoneyResponse"},
-                            "tax_total": {"python": "tax_total", "ref": "CommerceMoneyResponse"},
-                            "grand_total": {
-                                "python": "grand_total",
-                                "ref": "CommerceMoneyResponse",
-                            },
-                            "per_unit_totals": {
-                                "python": "per_unit_totals",
-                                "type": "array",
-                                "items": {"ref": "CommercePerUnitTotal"},
-                            },
-                            "credits": {
-                                "python": "credits",
-                                "nullable": True,
-                                "required": ["proration", "payer", "total"],
-                                "properties": {
-                                    "proration": {
-                                        "python": "proration",
-                                        "nullable": True,
-                                        "required": [
-                                            "amount",
-                                            "cycle_days_remaining",
-                                            "cycle_days_total",
-                                            "cycle_remaining_percent",
-                                        ],
-                                        "properties": {
-                                            "amount": {
-                                                "python": "amount",
-                                                "ref": "CommerceMoneyResponse",
-                                            },
-                                            "cycle_days_remaining": {
-                                                "python": "cycle_days_remaining",
-                                                "type": "integer",
-                                            },
-                                            "cycle_days_total": {
-                                                "python": "cycle_days_total",
-                                                "type": "integer",
-                                            },
-                                            "cycle_remaining_percent": {
-                                                "python": "cycle_remaining_percent",
-                                                "type": "number",
-                                            },
-                                        },
-                                        "allOf": [{"ref": "CommerceProrationCreditDetailResponse"}],
-                                    },
-                                    "payer": {
-                                        "python": "payer",
-                                        "nullable": True,
-                                        "required": ["remaining_balance", "applied_amount"],
-                                        "properties": {
-                                            "remaining_balance": {
-                                                "python": "remaining_balance",
-                                                "ref": "CommerceMoneyResponse",
-                                            },
-                                            "applied_amount": {
-                                                "python": "applied_amount",
-                                                "ref": "CommerceMoneyResponse",
-                                            },
-                                        },
-                                        "allOf": [{"ref": "CommercePayerCreditResponse"}],
-                                    },
-                                    "total": {"python": "total", "ref": "CommerceMoneyResponse"},
-                                },
-                                "allOf": [{"ref": "CommerceCreditsResponse"}],
-                            },
-                            "discounts": {
-                                "python": "discounts",
-                                "nullable": True,
-                                "required": ["proration", "total"],
-                                "properties": {
-                                    "proration": {
-                                        "python": "proration",
-                                        "nullable": True,
-                                        "required": [
-                                            "amount",
-                                            "cycle_days_passed",
-                                            "cycle_days_total",
-                                            "cycle_passed_percent",
-                                        ],
-                                        "properties": {
-                                            "amount": {
-                                                "python": "amount",
-                                                "ref": "CommerceMoneyResponse",
-                                            },
-                                            "cycle_days_passed": {
-                                                "python": "cycle_days_passed",
-                                                "type": "integer",
-                                            },
-                                            "cycle_days_total": {
-                                                "python": "cycle_days_total",
-                                                "type": "integer",
-                                            },
-                                            "cycle_passed_percent": {
-                                                "python": "cycle_passed_percent",
-                                                "type": "number",
-                                            },
-                                        },
-                                        "allOf": [{"ref": "CommerceProrationDiscountResponse"}],
-                                    },
-                                    "total": {"python": "total", "ref": "CommerceMoneyResponse"},
-                                },
-                                "allOf": [{"ref": "CommerceDiscountsResponse"}],
-                            },
-                        },
-                        "allOf": [{"ref": "CommerceTotalsResponse"}],
-                    },
-                },
-                "allOf": [{"ref": "CommerceSubscriptionItemNextPaymentResponse"}],
+                "ref": "CommerceSubscriptionItemNextPaymentResponse",
             },
             "payer_id": {"python": "payer_id", "type": "string"},
-            "payer": {
-                "python": "payer",
-                "nullable": True,
-                "required": [
-                    "object",
-                    "id",
-                    "instance_id",
-                    "first_name",
-                    "last_name",
-                    "email",
-                    "image_url",
-                    "created_at",
-                    "updated_at",
-                ],
-                "properties": {
-                    "object": {"python": "object", "type": "string"},
-                    "id": {"python": "id", "type": "string"},
-                    "instance_id": {"python": "instance_id", "type": "string"},
-                    "user_id": {"python": "user_id", "type": "string"},
-                    "first_name": {"python": "first_name", "type": "string"},
-                    "last_name": {"python": "last_name", "type": "string"},
-                    "email": {"python": "email", "type": "string"},
-                    "organization_id": {"python": "organization_id", "type": "string"},
-                    "organization_name": {"python": "organization_name", "type": "string"},
-                    "image_url": {"python": "image_url", "type": "string"},
-                    "credits_balance": {
-                        "python": "credits_balance",
-                        "ref": "CommerceMoneyResponse",
-                    },
-                    "created_at": {"python": "created_at", "type": "integer"},
-                    "updated_at": {"python": "updated_at", "type": "integer"},
-                },
-                "allOf": [{"ref": "CommercePayerResponse2"}],
-            },
+            "payer": {"python": "payer", "ref": "CommercePayerResponse2"},
             "is_free_trial": {"python": "is_free_trial", "type": "boolean"},
             "period_start": {"python": "period_start", "type": "integer", "nullable": True},
             "period_end": {"python": "period_end", "type": "integer", "nullable": True},
@@ -5142,18 +3516,7 @@ _SCHEMAS: dict[str, Any] = {
                 "nullable": True,
             },
             "charged_immediately": {"python": "charged_immediately", "type": "boolean"},
-            "immediate_charge": {
-                "python": "immediate_charge",
-                "nullable": True,
-                "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                "properties": {
-                    "amount": {"python": "amount", "type": "integer"},
-                    "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                    "currency": {"python": "currency", "type": "string"},
-                    "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                },
-                "allOf": [{"ref": "CommerceMoneyResponse"}],
-            },
+            "immediate_charge": {"python": "immediate_charge", "ref": "CommerceMoneyResponse"},
             "previous_subscription_item_status": {
                 "python": "previous_subscription_item_status",
                 "type": "string",
@@ -5204,30 +3567,8 @@ _SCHEMAS: dict[str, Any] = {
             "promo_code": {"python": "promo_code", "type": "string"},
             "effect": {"python": "effect", "type": "string"},
             "percent_off": {"python": "percent_off", "type": "number", "nullable": True},
-            "amount_off": {
-                "python": "amount_off",
-                "nullable": True,
-                "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                "properties": {
-                    "amount": {"python": "amount", "type": "integer"},
-                    "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                    "currency": {"python": "currency", "type": "string"},
-                    "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                },
-                "allOf": [{"ref": "CommerceMoneyResponse"}],
-            },
-            "amount": {
-                "python": "amount",
-                "nullable": True,
-                "required": ["amount", "amount_formatted", "currency", "currency_symbol"],
-                "properties": {
-                    "amount": {"python": "amount", "type": "integer"},
-                    "amount_formatted": {"python": "amount_formatted", "type": "string"},
-                    "currency": {"python": "currency", "type": "string"},
-                    "currency_symbol": {"python": "currency_symbol", "type": "string"},
-                },
-                "allOf": [{"ref": "CommerceMoneyResponse"}],
-            },
+            "amount_off": {"python": "amount_off", "ref": "CommerceMoneyResponse"},
+            "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
             "cycles_remaining": {"python": "cycles_remaining", "type": "integer", "nullable": True},
             "cycles_applied": {"python": "cycles_applied", "type": "integer"},
             "status": {"python": "status", "type": "string"},
@@ -5272,111 +3613,7 @@ _SCHEMAS: dict[str, Any] = {
             "subscription_item_id": {"python": "subscription_item_id", "type": "string"},
             "subscription_item": {"python": "subscription_item", "type": "object"},
             "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
-            "totals": {
-                "python": "totals",
-                "nullable": True,
-                "required": ["subtotal", "base_fee", "tax_total", "grand_total"],
-                "properties": {
-                    "subtotal": {"python": "subtotal", "ref": "CommerceMoneyResponse"},
-                    "base_fee": {"python": "base_fee", "ref": "CommerceMoneyResponse"},
-                    "tax_total": {"python": "tax_total", "ref": "CommerceMoneyResponse"},
-                    "grand_total": {"python": "grand_total", "ref": "CommerceMoneyResponse"},
-                    "per_unit_totals": {
-                        "python": "per_unit_totals",
-                        "type": "array",
-                        "items": {"ref": "CommercePerUnitTotal2"},
-                    },
-                    "credits": {
-                        "python": "credits",
-                        "nullable": True,
-                        "required": ["proration", "payer", "total"],
-                        "properties": {
-                            "proration": {
-                                "python": "proration",
-                                "nullable": True,
-                                "required": [
-                                    "amount",
-                                    "cycle_days_remaining",
-                                    "cycle_days_total",
-                                    "cycle_remaining_percent",
-                                ],
-                                "properties": {
-                                    "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
-                                    "cycle_days_remaining": {
-                                        "python": "cycle_days_remaining",
-                                        "type": "integer",
-                                    },
-                                    "cycle_days_total": {
-                                        "python": "cycle_days_total",
-                                        "type": "integer",
-                                    },
-                                    "cycle_remaining_percent": {
-                                        "python": "cycle_remaining_percent",
-                                        "type": "number",
-                                    },
-                                },
-                                "allOf": [{"ref": "CommerceProrationCreditDetailResponse"}],
-                            },
-                            "payer": {
-                                "python": "payer",
-                                "nullable": True,
-                                "required": ["remaining_balance", "applied_amount"],
-                                "properties": {
-                                    "remaining_balance": {
-                                        "python": "remaining_balance",
-                                        "ref": "CommerceMoneyResponse",
-                                    },
-                                    "applied_amount": {
-                                        "python": "applied_amount",
-                                        "ref": "CommerceMoneyResponse",
-                                    },
-                                },
-                                "allOf": [{"ref": "CommercePayerCreditResponse"}],
-                            },
-                            "total": {"python": "total", "ref": "CommerceMoneyResponse"},
-                        },
-                        "allOf": [{"ref": "CommerceCreditsResponse"}],
-                    },
-                    "discounts": {
-                        "python": "discounts",
-                        "type": "object",
-                        "nullable": True,
-                        "required": ["proration", "total"],
-                        "properties": {
-                            "proration": {
-                                "python": "proration",
-                                "type": "object",
-                                "nullable": True,
-                                "required": [
-                                    "amount",
-                                    "cycle_days_passed",
-                                    "cycle_days_total",
-                                    "cycle_passed_percent",
-                                ],
-                                "properties": {
-                                    "amount": {"python": "amount", "ref": "CommerceMoneyResponse"},
-                                    "cycle_days_passed": {
-                                        "python": "cycle_days_passed",
-                                        "type": "integer",
-                                    },
-                                    "cycle_days_total": {
-                                        "python": "cycle_days_total",
-                                        "type": "integer",
-                                    },
-                                    "cycle_passed_percent": {
-                                        "python": "cycle_passed_percent",
-                                        "type": "number",
-                                    },
-                                },
-                                "allOf": [{"ref": "BillingProrationDiscountDetail"}],
-                            },
-                            "total": {"python": "total", "ref": "CommerceMoneyResponse"},
-                        },
-                        "allOf": [{"ref": "BillingDiscountsResponse"}],
-                    },
-                },
-                "allOf": [{"ref": "CommerceTotalsResponse2"}],
-            },
+            "totals": {"python": "totals", "ref": "CommerceTotalsResponse2"},
             "payment_method_id": {"python": "payment_method_id", "type": "string"},
             "payment_method": {"python": "payment_method", "ref": "CommercePaymentMethodResponse"},
             "statement_id": {"python": "statement_id", "type": "string"},
@@ -5540,110 +3777,10 @@ _SCHEMAS: dict[str, Any] = {
             "key": {"python": "key", "type": "string"},
             "description": {"python": "description", "type": "string", "nullable": True},
             "roles": {"python": "roles", "type": "array", "items": {"ref": "RoleSetItem"}},
-            "default_role": {
-                "python": "default_role",
-                "nullable": True,
-                "required": [
-                    "object",
-                    "id",
-                    "name",
-                    "key",
-                    "description",
-                    "created_at",
-                    "updated_at",
-                ],
-                "properties": {
-                    "object": {"python": "object", "type": "string"},
-                    "id": {"python": "id", "type": "string"},
-                    "name": {"python": "name", "type": "string"},
-                    "key": {"python": "key", "type": "string"},
-                    "description": {"python": "description", "type": "string", "nullable": True},
-                    "members_count": {
-                        "python": "members_count",
-                        "type": "integer",
-                        "nullable": True,
-                    },
-                    "has_members": {"python": "has_members", "type": "boolean", "nullable": True},
-                    "created_at": {"python": "created_at", "type": "integer"},
-                    "updated_at": {"python": "updated_at", "type": "integer"},
-                },
-                "allOf": [{"ref": "RoleSetItem"}],
-            },
-            "creator_role": {
-                "python": "creator_role",
-                "nullable": True,
-                "required": [
-                    "object",
-                    "id",
-                    "name",
-                    "key",
-                    "description",
-                    "created_at",
-                    "updated_at",
-                ],
-                "properties": {
-                    "object": {"python": "object", "type": "string"},
-                    "id": {"python": "id", "type": "string"},
-                    "name": {"python": "name", "type": "string"},
-                    "key": {"python": "key", "type": "string"},
-                    "description": {"python": "description", "type": "string", "nullable": True},
-                    "members_count": {
-                        "python": "members_count",
-                        "type": "integer",
-                        "nullable": True,
-                    },
-                    "has_members": {"python": "has_members", "type": "boolean", "nullable": True},
-                    "created_at": {"python": "created_at", "type": "integer"},
-                    "updated_at": {"python": "updated_at", "type": "integer"},
-                },
-                "allOf": [{"ref": "RoleSetItem"}],
-            },
+            "default_role": {"python": "default_role", "ref": "RoleSetItem"},
+            "creator_role": {"python": "creator_role", "ref": "RoleSetItem"},
             "type": {"python": "type", "type": "string"},
-            "role_set_migration": {
-                "python": "role_set_migration",
-                "nullable": True,
-                "required": [
-                    "object",
-                    "id",
-                    "instance_id",
-                    "source_role_set_id",
-                    "trigger_type",
-                    "status",
-                    "migrated_members",
-                    "created_at",
-                    "updated_at",
-                ],
-                "properties": {
-                    "object": {"python": "object", "type": "string"},
-                    "id": {"python": "id", "type": "string"},
-                    "organization_id": {
-                        "python": "organization_id",
-                        "type": "string",
-                        "nullable": True,
-                    },
-                    "instance_id": {"python": "instance_id", "type": "string"},
-                    "source_role_set_id": {"python": "source_role_set_id", "type": "string"},
-                    "dest_role_set_id": {
-                        "python": "dest_role_set_id",
-                        "type": "string",
-                        "nullable": True,
-                    },
-                    "trigger_type": {"python": "trigger_type", "type": "string"},
-                    "status": {"python": "status", "type": "string"},
-                    "migrated_members": {"python": "migrated_members", "type": "integer"},
-                    "mappings": {
-                        "python": "mappings",
-                        "type": "object",
-                        "nullable": True,
-                        "additionalProperties": {"type": "string"},
-                    },
-                    "started_at": {"python": "started_at", "type": "integer", "nullable": True},
-                    "completed_at": {"python": "completed_at", "type": "integer", "nullable": True},
-                    "created_at": {"python": "created_at", "type": "integer"},
-                    "updated_at": {"python": "updated_at", "type": "integer"},
-                },
-                "allOf": [{"ref": "RoleSetMigration"}],
-            },
+            "role_set_migration": {"python": "role_set_migration", "ref": "RoleSetMigration"},
             "created_at": {"python": "created_at", "type": "integer"},
             "updated_at": {"python": "updated_at", "type": "integer"},
         },
@@ -6057,6 +4194,247 @@ _SCHEMAS: dict[str, Any] = {
             },
         },
     },
+    "VerifyOAuthAccessTokenResponse": {
+        "anyOf": [
+            {
+                "type": "object",
+                "required": [
+                    "object",
+                    "id",
+                    "client_id",
+                    "subject",
+                    "scopes",
+                    "revoked",
+                    "revocation_reason",
+                    "expired",
+                    "expiration",
+                    "created_at",
+                    "updated_at",
+                ],
+                "properties": {
+                    "object": {"python": "object", "type": "string"},
+                    "id": {"python": "id", "type": "string", "pattern": "^oat_[0-9A-Fa-f]{32}$"},
+                    "client_id": {"python": "client_id", "type": "string"},
+                    "subject": {"python": "subject", "type": "string", "pattern": "^user_\\w{27}$"},
+                    "scopes": {"python": "scopes", "type": "array", "items": {"type": "string"}},
+                    "aud": {"python": "aud", "type": "array", "items": {"type": "string"}},
+                    "act": {
+                        "python": "act",
+                        "type": "object",
+                        "required": ["sub"],
+                        "properties": {
+                            "iss": {"python": "iss", "type": "string"},
+                            "sub": {"python": "sub", "type": "string"},
+                            "act": {
+                                "python": "act",
+                                "type": "object",
+                                "required": ["sub"],
+                                "properties": {
+                                    "iss": {"python": "iss", "type": "string"},
+                                    "sub": {"python": "sub", "type": "string"},
+                                },
+                            },
+                        },
+                    },
+                    "revoked": {"python": "revoked", "type": "boolean"},
+                    "revocation_reason": {
+                        "python": "revocation_reason",
+                        "type": "string",
+                        "nullable": True,
+                    },
+                    "expired": {"python": "expired", "type": "boolean"},
+                    "expiration": {"python": "expiration", "type": "number", "nullable": True},
+                    "created_at": {"python": "created_at", "type": "number"},
+                    "updated_at": {"python": "updated_at", "type": "number"},
+                },
+            },
+            {
+                "type": "object",
+                "required": ["active"],
+                "properties": {"active": {"python": "active", "type": "boolean"}},
+            },
+        ]
+    },
+    "VerificationResponse": {
+        "type": "object",
+        "properties": {
+            "object": {"python": "object", "type": "string"},
+            "id": {"python": "id", "type": "string"},
+            "status": {"python": "status", "type": "string"},
+            "strategy": {"python": "strategy", "type": "string"},
+            "attempts": {"python": "attempts", "type": "integer", "nullable": True},
+            "expire_at": {"python": "expire_at", "type": "integer", "nullable": True},
+            "channel": {"python": "channel", "type": "string", "nullable": True},
+        },
+    },
+    "TrustedDeviceList": {
+        "type": "object",
+        "required": ["data", "total_count"],
+        "properties": {
+            "data": {"python": "data", "type": "array", "items": {"ref": "TrustedDevice"}},
+            "total_count": {"python": "total_count", "type": "integer"},
+        },
+    },
+    "BiometricCredentialList": {
+        "type": "object",
+        "required": ["data", "total_count"],
+        "properties": {
+            "data": {"python": "data", "type": "array", "items": {"ref": "BiometricCredential"}},
+            "total_count": {"python": "total_count", "type": "integer"},
+        },
+    },
+    "InvitationRevoked": {
+        "required": [
+            "object",
+            "id",
+            "email_address",
+            "public_metadata",
+            "status",
+            "created_at",
+            "updated_at",
+        ],
+        "properties": {
+            "object": {"python": "object", "type": "string"},
+            "id": {"python": "id", "type": "string"},
+            "email_address": {"python": "email_address", "type": "string", "format": "email"},
+            "public_metadata": {"python": "public_metadata", "type": "object"},
+            "revoked": {"python": "revoked", "type": "boolean"},
+            "status": {"python": "status", "type": "string"},
+            "url": {"python": "url", "type": "string"},
+            "expires_at": {"python": "expires_at", "type": "integer", "nullable": True},
+            "created_at": {"python": "created_at", "type": "integer"},
+            "updated_at": {"python": "updated_at", "type": "integer"},
+        },
+        "allOf": [
+            {"ref": "Invitation"},
+            {
+                "type": "object",
+                "properties": {
+                    "revoked": {"python": "revoked", "type": "boolean"},
+                    "status": {"python": "status", "type": "string"},
+                },
+            },
+        ],
+    },
+    "InstanceSettings": {
+        "type": "object",
+        "properties": {
+            "object": {"python": "object", "type": "string"},
+            "id": {"python": "id", "type": "string"},
+            "restricted_to_allowlist": {"python": "restricted_to_allowlist", "type": "boolean"},
+            "from_email_address": {"python": "from_email_address", "type": "string"},
+            "progressive_sign_up": {"python": "progressive_sign_up", "type": "boolean"},
+            "enhanced_email_deliverability": {
+                "python": "enhanced_email_deliverability",
+                "type": "boolean",
+            },
+        },
+    },
+    "MachineList": {
+        "type": "object",
+        "required": ["data", "total_count"],
+        "properties": {
+            "data": {"python": "data", "type": "array", "items": {"ref": "Machine"}},
+            "total_count": {"python": "total_count", "type": "integer"},
+        },
+    },
+    "MachineCreated": {
+        "required": ["secret_key"],
+        "properties": {"secret_key": {"python": "secret_key", "type": "string"}},
+        "allOf": [
+            {"ref": "Machine"},
+            {
+                "type": "object",
+                "required": ["secret_key"],
+                "properties": {"secret_key": {"python": "secret_key", "type": "string"}},
+            },
+        ],
+    },
+    "MachineDeleted": {
+        "type": "object",
+        "required": ["object", "id", "deleted"],
+        "properties": {
+            "object": {"python": "object", "type": "string"},
+            "id": {"python": "id", "type": "string"},
+            "deleted": {"python": "deleted", "type": "boolean"},
+        },
+    },
+    "MachineSecretKey": {
+        "type": "object",
+        "required": ["object", "secret"],
+        "properties": {
+            "object": {"python": "object", "type": "string"},
+            "secret": {"python": "secret", "type": "string"},
+        },
+    },
+    "MachineScopeDeleted": {
+        "type": "object",
+        "required": ["object", "from_machine_id", "to_machine_id", "deleted"],
+        "properties": {
+            "object": {"python": "object", "type": "string"},
+            "from_machine_id": {"python": "from_machine_id", "type": "string"},
+            "to_machine_id": {"python": "to_machine_id", "type": "string"},
+            "deleted": {"python": "deleted", "type": "boolean"},
+        },
+    },
+    "WaitlistEntries": {
+        "type": "object",
+        "required": ["data", "total_count"],
+        "properties": {
+            "data": {"python": "data", "type": "array", "items": {"ref": "WaitlistEntry"}},
+            "total_count": {"python": "total_count", "type": "integer"},
+        },
+    },
+    "SCIMDirectoryList": {
+        "type": "object",
+        "required": ["data", "total_count"],
+        "properties": {
+            "data": {"python": "data", "ref": "SCIMDirectories"},
+            "total_count": {"python": "total_count", "type": "integer"},
+        },
+    },
+    "SCIMGroupRoleMappingList": {
+        "type": "object",
+        "required": ["data", "total_count"],
+        "properties": {
+            "data": {"python": "data", "ref": "SCIMGroupRoleMappings"},
+            "total_count": {"python": "total_count", "type": "integer"},
+        },
+    },
+    "SCIMGroupRoleMappingDeleted": {
+        "type": "object",
+        "required": ["object", "id", "deleted"],
+        "properties": {
+            "object": {"python": "object", "type": "string"},
+            "id": {"python": "id", "type": "string"},
+            "deleted": {"python": "deleted", "type": "boolean"},
+        },
+    },
+    "DirectoryList": {
+        "type": "object",
+        "required": ["data", "total_count"],
+        "properties": {
+            "data": {"python": "data", "ref": "Directories"},
+            "total_count": {"python": "total_count", "type": "integer"},
+        },
+    },
+    "DirectoryGroupRoleMappingList": {
+        "type": "object",
+        "required": ["data", "total_count"],
+        "properties": {
+            "data": {"python": "data", "ref": "DirectoryGroupRoleMappings"},
+            "total_count": {"python": "total_count", "type": "integer"},
+        },
+    },
+    "DirectoryGroupRoleMappingDeleted": {
+        "type": "object",
+        "required": ["object", "id", "deleted"],
+        "properties": {
+            "object": {"python": "object", "type": "string"},
+            "id": {"python": "id", "type": "string"},
+            "deleted": {"python": "deleted", "type": "boolean"},
+        },
+    },
     "JWKSKeysItem": {
         "oneOf": [
             {"ref": "JWKSEd25519PublicKey"},
@@ -6127,18 +4505,6 @@ _SCHEMAS: dict[str, Any] = {
         ],
         "openTag": ["object", ["verification_ticket", "verification_saml", "verification_oauth"]],
     },
-    "PrepareEmailAddressVerificationResponse": {
-        "type": "object",
-        "properties": {
-            "object": {"python": "object", "type": "string"},
-            "id": {"python": "id", "type": "string"},
-            "status": {"python": "status", "type": "string"},
-            "strategy": {"python": "strategy", "type": "string"},
-            "attempts": {"python": "attempts", "type": "integer", "nullable": True},
-            "expire_at": {"python": "expire_at", "type": "integer", "nullable": True},
-            "channel": {"python": "channel", "type": "string", "nullable": True},
-        },
-    },
     "CreateSessionTokenResponse": {
         "type": "object",
         "properties": {
@@ -6172,177 +4538,9 @@ _SCHEMAS: dict[str, Any] = {
         "type": "object",
         "properties": {"user_id": {"python": "user_id", "type": "string", "nullable": False}},
     },
-    "ListUserTrustedDevicesResponse": {
-        "type": "object",
-        "required": ["data", "total_count"],
-        "properties": {
-            "data": {"python": "data", "type": "array", "items": {"ref": "TrustedDevice"}},
-            "total_count": {"python": "total_count", "type": "integer"},
-        },
-    },
-    "ListUserBiometricCredentialsResponse": {
-        "type": "object",
-        "required": ["data", "total_count"],
-        "properties": {
-            "data": {"python": "data", "type": "array", "items": {"ref": "BiometricCredential"}},
-            "total_count": {"python": "total_count", "type": "integer"},
-        },
-    },
     "DeleteTOTPResponse": {
         "type": "object",
         "properties": {"user_id": {"python": "user_id", "type": "string", "nullable": False}},
-    },
-    "RevokeInvitationResponse": {
-        "required": [
-            "object",
-            "id",
-            "email_address",
-            "public_metadata",
-            "status",
-            "created_at",
-            "updated_at",
-        ],
-        "properties": {
-            "object": {"python": "object", "type": "string"},
-            "id": {"python": "id", "type": "string"},
-            "email_address": {"python": "email_address", "type": "string", "format": "email"},
-            "public_metadata": {"python": "public_metadata", "type": "object"},
-            "revoked": {"python": "revoked", "type": "boolean"},
-            "status": {"python": "status", "type": "string"},
-            "url": {"python": "url", "type": "string"},
-            "expires_at": {"python": "expires_at", "type": "integer", "nullable": True},
-            "created_at": {"python": "created_at", "type": "integer"},
-            "updated_at": {"python": "updated_at", "type": "integer"},
-        },
-        "allOf": [
-            {"ref": "Invitation"},
-            {
-                "type": "object",
-                "properties": {
-                    "revoked": {"python": "revoked", "type": "boolean"},
-                    "status": {"python": "status", "type": "string"},
-                },
-            },
-        ],
-    },
-    "UpdateInstanceAuthConfigResponse": {
-        "type": "object",
-        "properties": {
-            "object": {"python": "object", "type": "string"},
-            "id": {"python": "id", "type": "string"},
-            "restricted_to_allowlist": {"python": "restricted_to_allowlist", "type": "boolean"},
-            "from_email_address": {"python": "from_email_address", "type": "string"},
-            "progressive_sign_up": {"python": "progressive_sign_up", "type": "boolean"},
-            "enhanced_email_deliverability": {
-                "python": "enhanced_email_deliverability",
-                "type": "boolean",
-            },
-        },
-    },
-    "ListMachinesResponse": {
-        "type": "object",
-        "required": ["data", "total_count"],
-        "properties": {
-            "data": {"python": "data", "type": "array", "items": {"ref": "Machine"}},
-            "total_count": {"python": "total_count", "type": "integer"},
-        },
-    },
-    "CreateMachineResponse": {
-        "required": ["secret_key"],
-        "properties": {"secret_key": {"python": "secret_key", "type": "string"}},
-        "allOf": [
-            {"ref": "Machine"},
-            {
-                "type": "object",
-                "required": ["secret_key"],
-                "properties": {"secret_key": {"python": "secret_key", "type": "string"}},
-            },
-        ],
-    },
-    "DeleteMachineResponse": {
-        "type": "object",
-        "required": ["object", "id", "deleted"],
-        "properties": {
-            "object": {"python": "object", "type": "string"},
-            "id": {"python": "id", "type": "string"},
-            "deleted": {"python": "deleted", "type": "boolean"},
-        },
-    },
-    "GetMachineSecretKeyResponse": {
-        "type": "object",
-        "required": ["object", "secret"],
-        "properties": {
-            "object": {"python": "object", "type": "string"},
-            "secret": {"python": "secret", "type": "string"},
-        },
-    },
-    "DeleteMachineScopeResponse": {
-        "type": "object",
-        "required": ["object", "from_machine_id", "to_machine_id", "deleted"],
-        "properties": {
-            "object": {"python": "object", "type": "string"},
-            "from_machine_id": {"python": "from_machine_id", "type": "string"},
-            "to_machine_id": {"python": "to_machine_id", "type": "string"},
-            "deleted": {"python": "deleted", "type": "boolean"},
-        },
-    },
-    "ListWaitlistEntriesResponse": {
-        "type": "object",
-        "required": ["data", "total_count"],
-        "properties": {
-            "data": {"python": "data", "type": "array", "items": {"ref": "WaitlistEntry"}},
-            "total_count": {"python": "total_count", "type": "integer"},
-        },
-    },
-    "ListSCIMDirectoriesResponse": {
-        "type": "object",
-        "required": ["data", "total_count"],
-        "properties": {
-            "data": {"python": "data", "ref": "SCIMDirectories"},
-            "total_count": {"python": "total_count", "type": "integer"},
-        },
-    },
-    "ListSCIMGroupRoleMappingsResponse": {
-        "type": "object",
-        "required": ["data", "total_count"],
-        "properties": {
-            "data": {"python": "data", "ref": "SCIMGroupRoleMappings"},
-            "total_count": {"python": "total_count", "type": "integer"},
-        },
-    },
-    "DeleteSCIMGroupRoleMappingResponse": {
-        "type": "object",
-        "required": ["object", "id", "deleted"],
-        "properties": {
-            "object": {"python": "object", "type": "string"},
-            "id": {"python": "id", "type": "string"},
-            "deleted": {"python": "deleted", "type": "boolean"},
-        },
-    },
-    "ListDirectoriesResponse": {
-        "type": "object",
-        "required": ["data", "total_count"],
-        "properties": {
-            "data": {"python": "data", "ref": "Directories"},
-            "total_count": {"python": "total_count", "type": "integer"},
-        },
-    },
-    "ListDirectoryGroupRoleMappingsResponse": {
-        "type": "object",
-        "required": ["data", "total_count"],
-        "properties": {
-            "data": {"python": "data", "ref": "DirectoryGroupRoleMappings"},
-            "total_count": {"python": "total_count", "type": "integer"},
-        },
-    },
-    "DeleteDirectoryGroupRoleMappingResponse": {
-        "type": "object",
-        "required": ["object", "id", "deleted"],
-        "properties": {
-            "object": {"python": "object", "type": "string"},
-            "id": {"python": "id", "type": "string"},
-            "deleted": {"python": "deleted", "type": "boolean"},
-        },
     },
     "CreateAdminPortalLinkTokenResponse": {
         "type": "object",
@@ -7277,7 +5475,9 @@ _MODEL_TYPES: dict[str, type[Any]] = {
     "Web3Wallet": Web3Wallet,
     "Passkey": Passkey,
     "ExternalAccountWithVerification": ExternalAccountWithVerification,
+    "SAMLAccountConnection": SAMLAccountConnection,
     "SAMLAccount": SAMLAccount,
+    "EnterpriseAccountConnection": EnterpriseAccountConnection,
     "EnterpriseAccount": EnterpriseAccount,
     "Organization": Organization,
     "OrganizationMembershipPublicUserData": OrganizationMembershipPublicUserData,
@@ -7362,6 +5562,7 @@ _MODEL_TYPES: dict[str, type[Any]] = {
     "OAuthApplicationWithSecret": OAuthApplicationWithSecret,
     "SAMLConnectionAttributeMapping": SAMLConnectionAttributeMapping,
     "SAMLConnectionLoginHint": SAMLConnectionLoginHint,
+    "SAMLConnection": SAMLConnection,
     "SAMLConnections": SAMLConnections,
     "EnterpriseConnection": EnterpriseConnection,
     "EnterpriseConnections": EnterpriseConnections,
@@ -7413,30 +5614,30 @@ _MODEL_TYPES: dict[str, type[Any]] = {
     "VerificationPasskey": VerificationPasskey,
     "VerificationOauth": VerificationOauth,
     "VerificationGoogleOneTap": VerificationGoogleOneTap,
-    "PrepareEmailAddressVerificationResponse": PrepareEmailAddressVerificationResponse,
+    "VerificationResponse": VerificationResponse,
+    "TrustedDeviceList": TrustedDeviceList,
+    "BiometricCredentialList": BiometricCredentialList,
+    "InvitationRevoked": InvitationRevoked,
+    "InstanceSettings": InstanceSettings,
+    "MachineList": MachineList,
+    "MachineCreated": MachineCreated,
+    "MachineDeleted": MachineDeleted,
+    "MachineSecretKey": MachineSecretKey,
+    "MachineScopeDeleted": MachineScopeDeleted,
+    "WaitlistEntries": WaitlistEntries,
+    "SCIMDirectoryList": SCIMDirectoryList,
+    "SCIMGroupRoleMappingList": SCIMGroupRoleMappingList,
+    "SCIMGroupRoleMappingDeleted": SCIMGroupRoleMappingDeleted,
+    "DirectoryList": DirectoryList,
+    "DirectoryGroupRoleMappingList": DirectoryGroupRoleMappingList,
+    "DirectoryGroupRoleMappingDeleted": DirectoryGroupRoleMappingDeleted,
     "CreateSessionTokenResponse": CreateSessionTokenResponse,
     "CreateSessionTokenFromTemplateResponse": CreateSessionTokenFromTemplateResponse,
     "VerifyPasswordResponse": VerifyPasswordResponse,
     "VerifyTOTPResponse": VerifyTOTPResponse,
     "DisableMFAResponse": DisableMFAResponse,
     "DeleteBackupCodeResponse": DeleteBackupCodeResponse,
-    "ListUserTrustedDevicesResponse": ListUserTrustedDevicesResponse,
-    "ListUserBiometricCredentialsResponse": ListUserBiometricCredentialsResponse,
     "DeleteTOTPResponse": DeleteTOTPResponse,
-    "RevokeInvitationResponse": RevokeInvitationResponse,
-    "UpdateInstanceAuthConfigResponse": UpdateInstanceAuthConfigResponse,
-    "ListMachinesResponse": ListMachinesResponse,
-    "CreateMachineResponse": CreateMachineResponse,
-    "DeleteMachineResponse": DeleteMachineResponse,
-    "GetMachineSecretKeyResponse": GetMachineSecretKeyResponse,
-    "DeleteMachineScopeResponse": DeleteMachineScopeResponse,
-    "ListWaitlistEntriesResponse": ListWaitlistEntriesResponse,
-    "ListSCIMDirectoriesResponse": ListSCIMDirectoriesResponse,
-    "ListSCIMGroupRoleMappingsResponse": ListSCIMGroupRoleMappingsResponse,
-    "DeleteSCIMGroupRoleMappingResponse": DeleteSCIMGroupRoleMappingResponse,
-    "ListDirectoriesResponse": ListDirectoriesResponse,
-    "ListDirectoryGroupRoleMappingsResponse": ListDirectoryGroupRoleMappingsResponse,
-    "DeleteDirectoryGroupRoleMappingResponse": DeleteDirectoryGroupRoleMappingResponse,
     "CreateAdminPortalLinkTokenResponse": CreateAdminPortalLinkTokenResponse,
     "RevokeAdminPortalLinkTokenResponse": RevokeAdminPortalLinkTokenResponse,
     "CreateApiKeyResponse": CreateApiKeyResponse,
@@ -7862,9 +6063,21 @@ def create_external_account_with_verification(
     )
 
 
+def create_saml_account_connection(value: Mapping[str, object]) -> SAMLAccountConnection:
+    """Construct one SAMLAccountConnection after applying its schema constraints."""
+    return cast(SAMLAccountConnection, _construct_model(value, "SAMLAccountConnection"))
+
+
 def create_saml_account(value: Mapping[str, object]) -> SAMLAccount:
     """Construct one SAMLAccount after applying its schema constraints."""
     return cast(SAMLAccount, _construct_model(value, "SAMLAccount"))
+
+
+def create_enterprise_account_connection(
+    value: Mapping[str, object],
+) -> EnterpriseAccountConnection:
+    """Construct one EnterpriseAccountConnection after applying its schema constraints."""
+    return cast(EnterpriseAccountConnection, _construct_model(value, "EnterpriseAccountConnection"))
 
 
 def create_enterprise_account(value: Mapping[str, object]) -> EnterpriseAccount:
@@ -8371,6 +6584,11 @@ def create_saml_connection_login_hint(value: Mapping[str, object]) -> SAMLConnec
     return cast(SAMLConnectionLoginHint, _construct_model(value, "SAMLConnectionLoginHint"))
 
 
+def create_saml_connection(value: Mapping[str, object]) -> SAMLConnection:
+    """Construct one SAMLConnection after applying its schema constraints."""
+    return cast(SAMLConnection, _construct_model(value, "SAMLConnection"))
+
+
 def create_saml_connections(value: Mapping[str, object]) -> SAMLConnections:
     """Construct one SAMLConnections after applying its schema constraints."""
     return cast(SAMLConnections, _construct_model(value, "SAMLConnections"))
@@ -8686,13 +6904,99 @@ def create_verification_google_one_tap(value: Mapping[str, object]) -> Verificat
     return cast(VerificationGoogleOneTap, _construct_model(value, "VerificationGoogleOneTap"))
 
 
-def create_prepare_email_address_verification_response(
+def create_verification_response(value: Mapping[str, object]) -> VerificationResponse:
+    """Construct one VerificationResponse after applying its schema constraints."""
+    return cast(VerificationResponse, _construct_model(value, "VerificationResponse"))
+
+
+def create_trusted_device_list(value: Mapping[str, object]) -> TrustedDeviceList:
+    """Construct one TrustedDeviceList after applying its schema constraints."""
+    return cast(TrustedDeviceList, _construct_model(value, "TrustedDeviceList"))
+
+
+def create_biometric_credential_list(value: Mapping[str, object]) -> BiometricCredentialList:
+    """Construct one BiometricCredentialList after applying its schema constraints."""
+    return cast(BiometricCredentialList, _construct_model(value, "BiometricCredentialList"))
+
+
+def create_invitation_revoked(value: Mapping[str, object]) -> InvitationRevoked:
+    """Construct one InvitationRevoked after applying its schema constraints."""
+    return cast(InvitationRevoked, _construct_model(value, "InvitationRevoked"))
+
+
+def create_instance_settings(value: Mapping[str, object]) -> InstanceSettings:
+    """Construct one InstanceSettings after applying its schema constraints."""
+    return cast(InstanceSettings, _construct_model(value, "InstanceSettings"))
+
+
+def create_machine_list(value: Mapping[str, object]) -> MachineList:
+    """Construct one MachineList after applying its schema constraints."""
+    return cast(MachineList, _construct_model(value, "MachineList"))
+
+
+def create_machine_created(value: Mapping[str, object]) -> MachineCreated:
+    """Construct one MachineCreated after applying its schema constraints."""
+    return cast(MachineCreated, _construct_model(value, "MachineCreated"))
+
+
+def create_machine_deleted(value: Mapping[str, object]) -> MachineDeleted:
+    """Construct one MachineDeleted after applying its schema constraints."""
+    return cast(MachineDeleted, _construct_model(value, "MachineDeleted"))
+
+
+def create_machine_secret_key(value: Mapping[str, object]) -> MachineSecretKey:
+    """Construct one MachineSecretKey after applying its schema constraints."""
+    return cast(MachineSecretKey, _construct_model(value, "MachineSecretKey"))
+
+
+def create_machine_scope_deleted(value: Mapping[str, object]) -> MachineScopeDeleted:
+    """Construct one MachineScopeDeleted after applying its schema constraints."""
+    return cast(MachineScopeDeleted, _construct_model(value, "MachineScopeDeleted"))
+
+
+def create_waitlist_entries(value: Mapping[str, object]) -> WaitlistEntries:
+    """Construct one WaitlistEntries after applying its schema constraints."""
+    return cast(WaitlistEntries, _construct_model(value, "WaitlistEntries"))
+
+
+def create_scim_directory_list(value: Mapping[str, object]) -> SCIMDirectoryList:
+    """Construct one SCIMDirectoryList after applying its schema constraints."""
+    return cast(SCIMDirectoryList, _construct_model(value, "SCIMDirectoryList"))
+
+
+def create_scim_group_role_mapping_list(value: Mapping[str, object]) -> SCIMGroupRoleMappingList:
+    """Construct one SCIMGroupRoleMappingList after applying its schema constraints."""
+    return cast(SCIMGroupRoleMappingList, _construct_model(value, "SCIMGroupRoleMappingList"))
+
+
+def create_scim_group_role_mapping_deleted(
     value: Mapping[str, object],
-) -> PrepareEmailAddressVerificationResponse:
-    """Construct one PrepareEmailAddressVerificationResponse after applying its schema constraints."""
+) -> SCIMGroupRoleMappingDeleted:
+    """Construct one SCIMGroupRoleMappingDeleted after applying its schema constraints."""
+    return cast(SCIMGroupRoleMappingDeleted, _construct_model(value, "SCIMGroupRoleMappingDeleted"))
+
+
+def create_directory_list(value: Mapping[str, object]) -> DirectoryList:
+    """Construct one DirectoryList after applying its schema constraints."""
+    return cast(DirectoryList, _construct_model(value, "DirectoryList"))
+
+
+def create_directory_group_role_mapping_list(
+    value: Mapping[str, object],
+) -> DirectoryGroupRoleMappingList:
+    """Construct one DirectoryGroupRoleMappingList after applying its schema constraints."""
     return cast(
-        PrepareEmailAddressVerificationResponse,
-        _construct_model(value, "PrepareEmailAddressVerificationResponse"),
+        DirectoryGroupRoleMappingList, _construct_model(value, "DirectoryGroupRoleMappingList")
+    )
+
+
+def create_directory_group_role_mapping_deleted(
+    value: Mapping[str, object],
+) -> DirectoryGroupRoleMappingDeleted:
+    """Construct one DirectoryGroupRoleMappingDeleted after applying its schema constraints."""
+    return cast(
+        DirectoryGroupRoleMappingDeleted,
+        _construct_model(value, "DirectoryGroupRoleMappingDeleted"),
     )
 
 
@@ -8731,129 +7035,9 @@ def create_delete_backup_code_response(value: Mapping[str, object]) -> DeleteBac
     return cast(DeleteBackupCodeResponse, _construct_model(value, "DeleteBackupCodeResponse"))
 
 
-def create_list_user_trusted_devices_response(
-    value: Mapping[str, object],
-) -> ListUserTrustedDevicesResponse:
-    """Construct one ListUserTrustedDevicesResponse after applying its schema constraints."""
-    return cast(
-        ListUserTrustedDevicesResponse, _construct_model(value, "ListUserTrustedDevicesResponse")
-    )
-
-
-def create_list_user_biometric_credentials_response(
-    value: Mapping[str, object],
-) -> ListUserBiometricCredentialsResponse:
-    """Construct one ListUserBiometricCredentialsResponse after applying its schema constraints."""
-    return cast(
-        ListUserBiometricCredentialsResponse,
-        _construct_model(value, "ListUserBiometricCredentialsResponse"),
-    )
-
-
 def create_delete_totp_response(value: Mapping[str, object]) -> DeleteTOTPResponse:
     """Construct one DeleteTOTPResponse after applying its schema constraints."""
     return cast(DeleteTOTPResponse, _construct_model(value, "DeleteTOTPResponse"))
-
-
-def create_revoke_invitation_response(value: Mapping[str, object]) -> RevokeInvitationResponse:
-    """Construct one RevokeInvitationResponse after applying its schema constraints."""
-    return cast(RevokeInvitationResponse, _construct_model(value, "RevokeInvitationResponse"))
-
-
-def create_update_instance_auth_config_response(
-    value: Mapping[str, object],
-) -> UpdateInstanceAuthConfigResponse:
-    """Construct one UpdateInstanceAuthConfigResponse after applying its schema constraints."""
-    return cast(
-        UpdateInstanceAuthConfigResponse,
-        _construct_model(value, "UpdateInstanceAuthConfigResponse"),
-    )
-
-
-def create_list_machines_response(value: Mapping[str, object]) -> ListMachinesResponse:
-    """Construct one ListMachinesResponse after applying its schema constraints."""
-    return cast(ListMachinesResponse, _construct_model(value, "ListMachinesResponse"))
-
-
-def create_create_machine_response(value: Mapping[str, object]) -> CreateMachineResponse:
-    """Construct one CreateMachineResponse after applying its schema constraints."""
-    return cast(CreateMachineResponse, _construct_model(value, "CreateMachineResponse"))
-
-
-def create_delete_machine_response(value: Mapping[str, object]) -> DeleteMachineResponse:
-    """Construct one DeleteMachineResponse after applying its schema constraints."""
-    return cast(DeleteMachineResponse, _construct_model(value, "DeleteMachineResponse"))
-
-
-def create_get_machine_secret_key_response(
-    value: Mapping[str, object],
-) -> GetMachineSecretKeyResponse:
-    """Construct one GetMachineSecretKeyResponse after applying its schema constraints."""
-    return cast(GetMachineSecretKeyResponse, _construct_model(value, "GetMachineSecretKeyResponse"))
-
-
-def create_delete_machine_scope_response(value: Mapping[str, object]) -> DeleteMachineScopeResponse:
-    """Construct one DeleteMachineScopeResponse after applying its schema constraints."""
-    return cast(DeleteMachineScopeResponse, _construct_model(value, "DeleteMachineScopeResponse"))
-
-
-def create_list_waitlist_entries_response(
-    value: Mapping[str, object],
-) -> ListWaitlistEntriesResponse:
-    """Construct one ListWaitlistEntriesResponse after applying its schema constraints."""
-    return cast(ListWaitlistEntriesResponse, _construct_model(value, "ListWaitlistEntriesResponse"))
-
-
-def create_list_scim_directories_response(
-    value: Mapping[str, object],
-) -> ListSCIMDirectoriesResponse:
-    """Construct one ListSCIMDirectoriesResponse after applying its schema constraints."""
-    return cast(ListSCIMDirectoriesResponse, _construct_model(value, "ListSCIMDirectoriesResponse"))
-
-
-def create_list_scim_group_role_mappings_response(
-    value: Mapping[str, object],
-) -> ListSCIMGroupRoleMappingsResponse:
-    """Construct one ListSCIMGroupRoleMappingsResponse after applying its schema constraints."""
-    return cast(
-        ListSCIMGroupRoleMappingsResponse,
-        _construct_model(value, "ListSCIMGroupRoleMappingsResponse"),
-    )
-
-
-def create_delete_scim_group_role_mapping_response(
-    value: Mapping[str, object],
-) -> DeleteSCIMGroupRoleMappingResponse:
-    """Construct one DeleteSCIMGroupRoleMappingResponse after applying its schema constraints."""
-    return cast(
-        DeleteSCIMGroupRoleMappingResponse,
-        _construct_model(value, "DeleteSCIMGroupRoleMappingResponse"),
-    )
-
-
-def create_list_directories_response(value: Mapping[str, object]) -> ListDirectoriesResponse:
-    """Construct one ListDirectoriesResponse after applying its schema constraints."""
-    return cast(ListDirectoriesResponse, _construct_model(value, "ListDirectoriesResponse"))
-
-
-def create_list_directory_group_role_mappings_response(
-    value: Mapping[str, object],
-) -> ListDirectoryGroupRoleMappingsResponse:
-    """Construct one ListDirectoryGroupRoleMappingsResponse after applying its schema constraints."""
-    return cast(
-        ListDirectoryGroupRoleMappingsResponse,
-        _construct_model(value, "ListDirectoryGroupRoleMappingsResponse"),
-    )
-
-
-def create_delete_directory_group_role_mapping_response(
-    value: Mapping[str, object],
-) -> DeleteDirectoryGroupRoleMappingResponse:
-    """Construct one DeleteDirectoryGroupRoleMappingResponse after applying its schema constraints."""
-    return cast(
-        DeleteDirectoryGroupRoleMappingResponse,
-        _construct_model(value, "DeleteDirectoryGroupRoleMappingResponse"),
-    )
 
 
 def create_create_admin_portal_link_token_response(
@@ -9105,6 +7289,7 @@ __all__ = [
     "create_billing_proration_discount_detail",
     "create_billing_statement",
     "create_biometric_credential",
+    "create_biometric_credential_list",
     "create_blocklist_identifier",
     "create_blocklist_identifiers",
     "create_clerk_error",
@@ -9154,7 +7339,6 @@ __all__ = [
     "create_create_enterprise_connection_oidc",
     "create_create_enterprise_connection_saml",
     "create_create_m2_mtoken_response",
-    "create_create_machine_response",
     "create_create_saml_connection_attribute_mapping",
     "create_create_saml_connection_login_hint",
     "create_create_scim_directory_group_role_mappings_item",
@@ -9162,20 +7346,20 @@ __all__ = [
     "create_create_session_token_response",
     "create_delete_api_key_response",
     "create_delete_backup_code_response",
-    "create_delete_directory_group_role_mapping_response",
-    "create_delete_machine_response",
-    "create_delete_machine_scope_response",
-    "create_delete_scim_group_role_mapping_response",
     "create_delete_totp_response",
     "create_deleted_object",
     "create_directory",
     "create_directory_group_role_mapping",
+    "create_directory_group_role_mapping_deleted",
+    "create_directory_group_role_mapping_list",
+    "create_directory_list",
     "create_disable_mfa_response",
     "create_dns_target",
     "create_domain",
     "create_domains",
     "create_email_address",
     "create_enterprise_account",
+    "create_enterprise_account_connection",
     "create_enterprise_connection",
     "create_enterprise_connection_test_run",
     "create_enterprise_connection_test_run_response",
@@ -9188,13 +7372,14 @@ __all__ = [
     "create_get_api_key_response",
     "create_get_api_key_secret_response",
     "create_get_m2_mtokens_response",
-    "create_get_machine_secret_key_response",
     "create_identification_link",
     "create_instance",
     "create_instance_communication",
     "create_instance_protect",
     "create_instance_restrictions",
+    "create_instance_settings",
     "create_invitation",
+    "create_invitation_revoked",
     "create_jwks",
     "create_jwks_ecdsa_private_key",
     "create_jwks_ecdsa_public_key",
@@ -9205,16 +7390,13 @@ __all__ = [
     "create_jwks_symmetric_key",
     "create_jwt_template",
     "create_list_api_keys_response",
-    "create_list_directories_response",
-    "create_list_directory_group_role_mappings_response",
-    "create_list_machines_response",
-    "create_list_scim_directories_response",
-    "create_list_scim_group_role_mappings_response",
-    "create_list_user_biometric_credentials_response",
-    "create_list_user_trusted_devices_response",
-    "create_list_waitlist_entries_response",
     "create_machine",
+    "create_machine_created",
+    "create_machine_deleted",
+    "create_machine_list",
     "create_machine_scope",
+    "create_machine_scope_deleted",
+    "create_machine_secret_key",
     "create_machine_without_scoped_machines",
     "create_oauth_application",
     "create_oauth_application_settings",
@@ -9245,7 +7427,6 @@ __all__ = [
     "create_permission",
     "create_permissions",
     "create_phone_number",
-    "create_prepare_email_address_verification_response",
     "create_price_transition_request",
     "create_proxy_check",
     "create_redirect_url",
@@ -9254,7 +7435,6 @@ __all__ = [
     "create_reverification",
     "create_revoke_admin_portal_link_token_response",
     "create_revoke_api_key_response",
-    "create_revoke_invitation_response",
     "create_revoke_m2_mtoken_response",
     "create_role",
     "create_role_set",
@@ -9263,11 +7443,16 @@ __all__ = [
     "create_role_sets",
     "create_roles",
     "create_saml_account",
+    "create_saml_account_connection",
+    "create_saml_connection",
     "create_saml_connection_attribute_mapping",
     "create_saml_connection_login_hint",
     "create_saml_connections",
     "create_scim_directory",
+    "create_scim_directory_list",
     "create_scim_group_role_mapping",
+    "create_scim_group_role_mapping_deleted",
+    "create_scim_group_role_mapping_list",
     "create_scim_user_metadata",
     "create_session",
     "create_session_activity_response",
@@ -9284,11 +7469,11 @@ __all__ = [
     "create_token",
     "create_total_count",
     "create_trusted_device",
+    "create_trusted_device_list",
     "create_update_api_key_response",
     "create_update_enterprise_connection_custom_attributes_item",
     "create_update_enterprise_connection_oidc",
     "create_update_enterprise_connection_saml",
-    "create_update_instance_auth_config_response",
     "create_update_saml_connection_attribute_mapping",
     "create_update_saml_connection_login_hint",
     "create_user",
@@ -9299,6 +7484,7 @@ __all__ = [
     "create_verification_oauth",
     "create_verification_otp",
     "create_verification_passkey",
+    "create_verification_response",
     "create_verification_saml",
     "create_verification_scim",
     "create_verification_ticket",
@@ -9307,6 +7493,7 @@ __all__ = [
     "create_verify_m2_mtoken_response",
     "create_verify_password_response",
     "create_verify_totp_response",
+    "create_waitlist_entries",
     "create_waitlist_entry",
     "create_web3_wallet",
     "deserialize_model",

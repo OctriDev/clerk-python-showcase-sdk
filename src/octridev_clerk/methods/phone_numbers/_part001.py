@@ -19,12 +19,7 @@ from octridev_clerk.client import (
     sdk_request_sync,
 )
 from octridev_clerk.errors import SdkValidationError, sdk_decode
-from octridev_clerk.types import (
-    ClerkErrors,
-    DeletedObject,
-    PhoneNumber,
-    PrepareEmailAddressVerificationResponse,
-)
+from octridev_clerk.types import ClerkErrors, DeletedObject, PhoneNumber, VerificationResponse
 from octridev_clerk.wire import _validate_response_enums, to_wire
 
 
@@ -446,7 +441,7 @@ async def prepare_phone_number_verification(
     phone_number_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> PrepareEmailAddressVerificationResponse:
+) -> VerificationResponse:
     """Sends a one-time code to the given phone number so that a backend can verify the
     user controls it (for example, in a custom, backend-driven sign-in flow). The code
     is tracked on its own verification; confirm it with attempt_verification.
@@ -474,8 +469,7 @@ async def prepare_phone_number_verification(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "PrepareEmailAddressVerificationResponse"),
-            PrepareEmailAddressVerificationResponse,
+            _validate_response_enums(response.data, "VerificationResponse"), VerificationResponse
         ),
     )
 
@@ -485,7 +479,7 @@ def prepare_phone_number_verification_sync(
     phone_number_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> PrepareEmailAddressVerificationResponse:
+) -> VerificationResponse:
     """Sends a one-time code to the given phone number so that a backend can verify the
     user controls it (for example, in a custom, backend-driven sign-in flow). The code
     is tracked on its own verification; confirm it with attempt_verification.
@@ -513,8 +507,7 @@ def prepare_phone_number_verification_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "PrepareEmailAddressVerificationResponse"),
-            PrepareEmailAddressVerificationResponse,
+            _validate_response_enums(response.data, "VerificationResponse"), VerificationResponse
         ),
     )
 
@@ -529,7 +522,7 @@ async def attempt_phone_number_verification(
     code: str,
     *,
     request_options: RequestOptions | None = None,
-) -> PrepareEmailAddressVerificationResponse:
+) -> VerificationResponse:
     """Checks a one-time code against the verification identified by verification_id, and
     returns the verification with its updated status (`verified`, `unverified`,
     `expired`, or `failed`) and attempt count, so a backend driving its own frontend can
@@ -583,8 +576,7 @@ async def attempt_phone_number_verification(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "PrepareEmailAddressVerificationResponse"),
-            PrepareEmailAddressVerificationResponse,
+            _validate_response_enums(response.data, "VerificationResponse"), VerificationResponse
         ),
     )
 
@@ -596,7 +588,7 @@ def attempt_phone_number_verification_sync(
     code: str,
     *,
     request_options: RequestOptions | None = None,
-) -> PrepareEmailAddressVerificationResponse:
+) -> VerificationResponse:
     """Checks a one-time code against the verification identified by verification_id, and
     returns the verification with its updated status (`verified`, `unverified`,
     `expired`, or `failed`) and attempt count, so a backend driving its own frontend can
@@ -650,8 +642,7 @@ def attempt_phone_number_verification_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "PrepareEmailAddressVerificationResponse"),
-            PrepareEmailAddressVerificationResponse,
+            _validate_response_enums(response.data, "VerificationResponse"), VerificationResponse
         ),
     )
 

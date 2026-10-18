@@ -9,64 +9,7 @@ from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
 from octridev_clerk.client import NOT_GIVEN, NotGiven
 
-from ..validation import validate_email, validate_length, validate_pattern, validate_required
-
-
-class RevokeInvitationResponseVariant1(BaseModel):
-    model_config = ConfigDict(populate_by_name=False, arbitrary_types_allowed=True)
-
-    revoked: bool | NotGiven = NOT_GIVEN
-    """@example true"""
-    status: Literal["revoked"] | str | NotGiven = NOT_GIVEN
-    """@example "revoked" """
-
-
-class RevokeInvitationResponse(BaseModel):
-    model_config = ConfigDict(populate_by_name=False, arbitrary_types_allowed=True)
-
-    object: Literal["invitation"] | str
-    """Required enumerated value serialized in the `object` wire field."""
-    id: str
-    """Required `string` value serialized in the `id` wire field."""
-    email_address: str
-    """Required `email`-formatted value serialized in the `email_address` wire field."""
-    public_metadata: dict[str, Any]
-    """Required object value serialized in the `public_metadata` wire field."""
-    status: Literal["revoked"] | str
-    """@example "revoked" """
-    created_at: int
-    """Unix timestamp of creation."""
-    updated_at: int
-    """Unix timestamp of last update."""
-    revoked: bool | NotGiven = NOT_GIVEN
-    """@example true"""
-    url: str | NotGiven = NOT_GIVEN
-    """Optional `string` value serialized in the `url` wire field."""
-    expires_at: int | None | NotGiven = NOT_GIVEN
-    """Unix timestamp of expiration."""
-
-    @model_validator(mode="before")
-    @classmethod
-    def _validate_required(cls, value):
-        validate_required(
-            value,
-            [
-                "object",
-                "id",
-                "email_address",
-                "public_metadata",
-                "status",
-                "created_at",
-                "updated_at",
-            ],
-        )
-        return value
-
-    @field_validator("email_address")
-    @classmethod
-    def _validate_email_address(cls, value):
-        validate_email("email_address", value)
-        return value
+from ..validation import validate_length, validate_pattern, validate_required
 
 
 class RevokeAdminPortalLinkTokenResponse(BaseModel):

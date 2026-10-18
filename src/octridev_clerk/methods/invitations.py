@@ -20,7 +20,7 @@ from octridev_clerk.client import (
     serialize_query,
 )
 from octridev_clerk.errors import SdkValidationError, sdk_decode
-from octridev_clerk.types import ClerkErrors, DeletedObject, Invitation, RevokeInvitationResponse
+from octridev_clerk.types import ClerkErrors, DeletedObject, Invitation, InvitationRevoked
 from octridev_clerk.validation import validate_items, validate_range
 from octridev_clerk.wire import _validate_response_enums, to_wire
 
@@ -526,7 +526,7 @@ async def revoke_invitation(
     invitation_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> RevokeInvitationResponse:
+) -> InvitationRevoked:
     """Revokes the given invitation. Revoking an invitation will prevent the user from
     using the invitation link that was sent to them. However, it doesn't prevent the
     user from signing up if they follow the sign up flow. Only active (i.e. non-revoked)
@@ -548,8 +548,7 @@ async def revoke_invitation(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "RevokeInvitationResponse"),
-            RevokeInvitationResponse,
+            _validate_response_enums(response.data, "InvitationRevoked"), InvitationRevoked
         ),
     )
 
@@ -559,7 +558,7 @@ def revoke_invitation_sync(
     invitation_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> RevokeInvitationResponse:
+) -> InvitationRevoked:
     """Revokes the given invitation. Revoking an invitation will prevent the user from
     using the invitation link that was sent to them. However, it doesn't prevent the
     user from signing up if they follow the sign up flow. Only active (i.e. non-revoked)
@@ -581,8 +580,7 @@ def revoke_invitation_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "RevokeInvitationResponse"),
-            RevokeInvitationResponse,
+            _validate_response_enums(response.data, "InvitationRevoked"), InvitationRevoked
         ),
     )
 

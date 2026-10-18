@@ -24,9 +24,9 @@ from octridev_clerk.types import (
     ClerkErrors,
     CreateSCIMDirectoryGroupRoleMappingsItem,
     DeletedObject,
-    ListSCIMDirectoriesResponse,
-    ListSCIMGroupRoleMappingsResponse,
     SCIMDirectory,
+    SCIMDirectoryList,
+    SCIMGroupRoleMappingList,
 )
 from octridev_clerk.validation import validate_range
 from octridev_clerk.wire import _validate_response_enums, to_wire
@@ -67,7 +67,7 @@ async def list_scim_directories(
     offset: int | NotGiven = NOT_GIVEN,
     *,
     request_options: RequestOptions | None = None,
-) -> ListSCIMDirectoriesResponse:
+) -> SCIMDirectoryList:
     """Returns a list of all directories for the instance.
 
     Args:
@@ -96,8 +96,7 @@ async def list_scim_directories(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "ListSCIMDirectoriesResponse"),
-            ListSCIMDirectoriesResponse,
+            _validate_response_enums(response.data, "SCIMDirectoryList"), SCIMDirectoryList
         ),
     )
 
@@ -108,7 +107,7 @@ def list_scim_directories_sync(
     offset: int | NotGiven = NOT_GIVEN,
     *,
     request_options: RequestOptions | None = None,
-) -> ListSCIMDirectoriesResponse:
+) -> SCIMDirectoryList:
     """Returns a list of all directories for the instance.
 
     Args:
@@ -137,8 +136,7 @@ def list_scim_directories_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "ListSCIMDirectoriesResponse"),
-            ListSCIMDirectoriesResponse,
+            _validate_response_enums(response.data, "SCIMDirectoryList"), SCIMDirectoryList
         ),
     )
 
@@ -600,7 +598,7 @@ async def list_scim_group_role_mappings(
     scim_directory_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> ListSCIMGroupRoleMappingsResponse:
+) -> SCIMGroupRoleMappingList:
     """Returns the list of SCIM group to organization role mappings for a directory,
     ordered by precedence.
 
@@ -620,8 +618,8 @@ async def list_scim_group_role_mappings(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "ListSCIMGroupRoleMappingsResponse"),
-            ListSCIMGroupRoleMappingsResponse,
+            _validate_response_enums(response.data, "SCIMGroupRoleMappingList"),
+            SCIMGroupRoleMappingList,
         ),
     )
 
@@ -631,7 +629,7 @@ def list_scim_group_role_mappings_sync(
     scim_directory_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> ListSCIMGroupRoleMappingsResponse:
+) -> SCIMGroupRoleMappingList:
     """Returns the list of SCIM group to organization role mappings for a directory,
     ordered by precedence.
 
@@ -651,8 +649,8 @@ def list_scim_group_role_mappings_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "ListSCIMGroupRoleMappingsResponse"),
-            ListSCIMGroupRoleMappingsResponse,
+            _validate_response_enums(response.data, "SCIMGroupRoleMappingList"),
+            SCIMGroupRoleMappingList,
         ),
     )
 

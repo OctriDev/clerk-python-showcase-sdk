@@ -18,6 +18,7 @@ from octridev_clerk.client import (
     sdk_request_sync,
 )
 from octridev_clerk.errors import SdkValidationError, sdk_decode
+from octridev_clerk.types import VerifyOAuthAccessTokenResponse
 from octridev_clerk.wire import to_wire
 
 
@@ -53,7 +54,7 @@ async def verify_oauth_access_token(
     secret: str | NotGiven = NOT_GIVEN,
     *,
     request_options: RequestOptions | None = None,
-) -> dict[str, Any]:
+) -> VerifyOAuthAccessTokenResponse:
     """Verifies an OAuth access token and returns its token details or active status.
     Supply the token in `access_token`; the legacy `secret` field is deprecated. Use
     this endpoint to check whether an access token is active and retrieve its associated
@@ -81,7 +82,8 @@ async def verify_oauth_access_token(
         config=_client_config,
     )
     return sdk_decode(
-        _resp, lambda response: _validate_pydantic_response(response.data, dict[str, Any])
+        _resp,
+        lambda response: _validate_pydantic_response(response.data, VerifyOAuthAccessTokenResponse),
     )
 
 
@@ -91,7 +93,7 @@ def verify_oauth_access_token_sync(
     secret: str | NotGiven = NOT_GIVEN,
     *,
     request_options: RequestOptions | None = None,
-) -> dict[str, Any]:
+) -> VerifyOAuthAccessTokenResponse:
     """Verifies an OAuth access token and returns its token details or active status.
     Supply the token in `access_token`; the legacy `secret` field is deprecated. Use
     this endpoint to check whether an access token is active and retrieve its associated
@@ -119,7 +121,8 @@ def verify_oauth_access_token_sync(
         config=_client_config,
     )
     return sdk_decode(
-        _resp, lambda response: _validate_pydantic_response(response.data, dict[str, Any])
+        _resp,
+        lambda response: _validate_pydantic_response(response.data, VerifyOAuthAccessTokenResponse),
     )
 
 

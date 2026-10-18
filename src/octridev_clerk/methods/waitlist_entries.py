@@ -20,12 +20,7 @@ from octridev_clerk.client import (
     serialize_query,
 )
 from octridev_clerk.errors import SdkValidationError, sdk_decode
-from octridev_clerk.types import (
-    ClerkErrors,
-    DeletedObject,
-    ListWaitlistEntriesResponse,
-    WaitlistEntry,
-)
+from octridev_clerk.types import ClerkErrors, DeletedObject, WaitlistEntries, WaitlistEntry
 from octridev_clerk.validation import validate_items, validate_range
 from octridev_clerk.wire import _validate_response_enums, to_wire
 
@@ -65,7 +60,7 @@ async def list_waitlist_entries(
     order_by: str | NotGiven = NOT_GIVEN,
     *,
     request_options: RequestOptions | None = None,
-) -> ListWaitlistEntriesResponse:
+) -> WaitlistEntries:
     """Retrieve a list of waitlist entries for the instance. Entries are ordered by
     creation date in descending order by default. Supports filtering by email address or
     status and pagination with limit and offset parameters.
@@ -108,8 +103,7 @@ async def list_waitlist_entries(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "ListWaitlistEntriesResponse"),
-            ListWaitlistEntriesResponse,
+            _validate_response_enums(response.data, "WaitlistEntries"), WaitlistEntries
         ),
     )
 
@@ -123,7 +117,7 @@ def list_waitlist_entries_sync(
     order_by: str | NotGiven = NOT_GIVEN,
     *,
     request_options: RequestOptions | None = None,
-) -> ListWaitlistEntriesResponse:
+) -> WaitlistEntries:
     """Retrieve a list of waitlist entries for the instance. Entries are ordered by
     creation date in descending order by default. Supports filtering by email address or
     status and pagination with limit and offset parameters.
@@ -166,8 +160,7 @@ def list_waitlist_entries_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "ListWaitlistEntriesResponse"),
-            ListWaitlistEntriesResponse,
+            _validate_response_enums(response.data, "WaitlistEntries"), WaitlistEntries
         ),
     )
 

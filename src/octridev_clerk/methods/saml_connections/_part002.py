@@ -231,7 +231,10 @@ async def update_saml_connection(
         config=_client_config,
     )
     return sdk_decode(
-        _resp, lambda response: _validate_pydantic_response(response.data, SAMLConnection)
+        _resp,
+        lambda response: _validate_pydantic_response(
+            _validate_response_enums(response.data, "SAMLConnection"), SAMLConnection
+        ),
     )
 
 
@@ -407,7 +410,10 @@ def update_saml_connection_sync(
         config=_client_config,
     )
     return sdk_decode(
-        _resp, lambda response: _validate_pydantic_response(response.data, SAMLConnection)
+        _resp,
+        lambda response: _validate_pydantic_response(
+            _validate_response_enums(response.data, "SAMLConnection"), SAMLConnection
+        ),
     )
 
 
