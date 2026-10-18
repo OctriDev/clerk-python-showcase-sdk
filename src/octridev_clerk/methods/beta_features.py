@@ -18,7 +18,7 @@ from octridev_clerk.client import (
     sdk_request_sync,
 )
 from octridev_clerk.errors import SdkValidationError, sdk_decode
-from octridev_clerk.types import ClerkErrors, UpdateInstanceAuthConfigResponse
+from octridev_clerk.types import ClerkErrors, InstanceSettings
 from octridev_clerk.wire import _validate_response_enums, to_wire
 
 
@@ -59,7 +59,7 @@ async def update_instance_auth_config(
     test_mode: bool | None | NotGiven = NOT_GIVEN,
     *,
     request_options: RequestOptions | None = None,
-) -> UpdateInstanceAuthConfigResponse:
+) -> InstanceSettings:
     """Updates instance authentication settings, including allowlist restrictions, the
     sender address for authentication emails, progressive sign-up, and test mode. Set
     `from_email_address` to an alphanumeric local part only; `restricted_to_allowlist`
@@ -115,8 +115,7 @@ async def update_instance_auth_config(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "UpdateInstanceAuthConfigResponse"),
-            UpdateInstanceAuthConfigResponse,
+            _validate_response_enums(response.data, "InstanceSettings"), InstanceSettings
         ),
     )
 
@@ -129,7 +128,7 @@ def update_instance_auth_config_sync(
     test_mode: bool | None | NotGiven = NOT_GIVEN,
     *,
     request_options: RequestOptions | None = None,
-) -> UpdateInstanceAuthConfigResponse:
+) -> InstanceSettings:
     """Updates instance authentication settings, including allowlist restrictions, the
     sender address for authentication emails, progressive sign-up, and test mode. Set
     `from_email_address` to an alphanumeric local part only; `restricted_to_allowlist`
@@ -185,8 +184,7 @@ def update_instance_auth_config_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "UpdateInstanceAuthConfigResponse"),
-            UpdateInstanceAuthConfigResponse,
+            _validate_response_enums(response.data, "InstanceSettings"), InstanceSettings
         ),
     )
 

@@ -21,9 +21,9 @@ from octridev_clerk.client import (
 from octridev_clerk.errors import SdkValidationError, sdk_decode
 from octridev_clerk.types import (
     ClerkErrors,
-    DeleteDirectoryGroupRoleMappingResponse,
     DirectoryGroupRoleMapping,
-    ListDirectoryGroupRoleMappingsResponse,
+    DirectoryGroupRoleMappingDeleted,
+    DirectoryGroupRoleMappingList,
     ReplaceDirectoryGroupRoleMappingsMappingsItem,
 )
 from octridev_clerk.validation import validate_range
@@ -206,7 +206,7 @@ async def replace_directory_group_role_mappings(
     mappings: list[ReplaceDirectoryGroupRoleMappingsMappingsItem],
     *,
     request_options: RequestOptions | None = None,
-) -> ListDirectoryGroupRoleMappingsResponse:
+) -> DirectoryGroupRoleMappingList:
     """Replaces the entire set of directory group role mappings for a directory. The
     position of each item in the `mappings` array determines its precedence (the first
     item gets precedence 1). Passing an empty array removes all mappings. Mappings can
@@ -246,8 +246,8 @@ async def replace_directory_group_role_mappings(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "ListDirectoryGroupRoleMappingsResponse"),
-            ListDirectoryGroupRoleMappingsResponse,
+            _validate_response_enums(response.data, "DirectoryGroupRoleMappingList"),
+            DirectoryGroupRoleMappingList,
         ),
     )
 
@@ -258,7 +258,7 @@ def replace_directory_group_role_mappings_sync(
     mappings: list[ReplaceDirectoryGroupRoleMappingsMappingsItem],
     *,
     request_options: RequestOptions | None = None,
-) -> ListDirectoryGroupRoleMappingsResponse:
+) -> DirectoryGroupRoleMappingList:
     """Replaces the entire set of directory group role mappings for a directory. The
     position of each item in the `mappings` array determines its precedence (the first
     item gets precedence 1). Passing an empty array removes all mappings. Mappings can
@@ -298,8 +298,8 @@ def replace_directory_group_role_mappings_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "ListDirectoryGroupRoleMappingsResponse"),
-            ListDirectoryGroupRoleMappingsResponse,
+            _validate_response_enums(response.data, "DirectoryGroupRoleMappingList"),
+            DirectoryGroupRoleMappingList,
         ),
     )
 
@@ -313,7 +313,7 @@ async def delete_directory_group_role_mapping(
     mapping_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> DeleteDirectoryGroupRoleMappingResponse:
+) -> DirectoryGroupRoleMappingDeleted:
     """Deletes a single directory group role mapping. Mappings can be deleted while group
     role mapping is disabled on the directory, but the change only takes effect once it
     is enabled.
@@ -335,8 +335,8 @@ async def delete_directory_group_role_mapping(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "DeleteDirectoryGroupRoleMappingResponse"),
-            DeleteDirectoryGroupRoleMappingResponse,
+            _validate_response_enums(response.data, "DirectoryGroupRoleMappingDeleted"),
+            DirectoryGroupRoleMappingDeleted,
         ),
     )
 
@@ -347,7 +347,7 @@ def delete_directory_group_role_mapping_sync(
     mapping_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> DeleteDirectoryGroupRoleMappingResponse:
+) -> DirectoryGroupRoleMappingDeleted:
     """Deletes a single directory group role mapping. Mappings can be deleted while group
     role mapping is disabled on the directory, but the change only takes effect once it
     is enabled.
@@ -369,8 +369,8 @@ def delete_directory_group_role_mapping_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "DeleteDirectoryGroupRoleMappingResponse"),
-            DeleteDirectoryGroupRoleMappingResponse,
+            _validate_response_enums(response.data, "DirectoryGroupRoleMappingDeleted"),
+            DirectoryGroupRoleMappingDeleted,
         ),
     )
 

@@ -22,11 +22,11 @@ from octridev_clerk.client import (
 from octridev_clerk.errors import SdkValidationError, sdk_decode
 from octridev_clerk.types import (
     ClerkErrors,
-    CreateMachineResponse,
-    DeleteMachineResponse,
-    GetMachineSecretKeyResponse,
-    ListMachinesResponse,
     Machine,
+    MachineCreated,
+    MachineDeleted,
+    MachineList,
+    MachineSecretKey,
 )
 from octridev_clerk.validation import validate_items, validate_length, validate_range
 from octridev_clerk.wire import _validate_response_enums, to_wire
@@ -69,7 +69,7 @@ async def list_machines(
     order_by: str | NotGiven = NOT_GIVEN,
     *,
     request_options: RequestOptions | None = None,
-) -> ListMachinesResponse:
+) -> MachineList:
     """This request returns the list of machines for an instance. The machines are ordered
     by descending creation date (i.e. most recent machines will be returned first)
 
@@ -113,7 +113,7 @@ async def list_machines(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "ListMachinesResponse"), ListMachinesResponse
+            _validate_response_enums(response.data, "MachineList"), MachineList
         ),
     )
 
@@ -126,7 +126,7 @@ def list_machines_sync(
     order_by: str | NotGiven = NOT_GIVEN,
     *,
     request_options: RequestOptions | None = None,
-) -> ListMachinesResponse:
+) -> MachineList:
     """This request returns the list of machines for an instance. The machines are ordered
     by descending creation date (i.e. most recent machines will be returned first)
 
@@ -170,7 +170,7 @@ def list_machines_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "ListMachinesResponse"), ListMachinesResponse
+            _validate_response_enums(response.data, "MachineList"), MachineList
         ),
     )
 
@@ -185,7 +185,7 @@ async def create_machine(
     default_token_ttl: int | NotGiven = NOT_GIVEN,
     *,
     request_options: RequestOptions | None = None,
-) -> CreateMachineResponse:
+) -> MachineCreated:
     """Creates a new machine. Provide a `name` and optionally configure its machine scopes
     and default token TTL. The response includes the machine's secret key, so store it
     securely.
@@ -235,7 +235,7 @@ async def create_machine(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "CreateMachineResponse"), CreateMachineResponse
+            _validate_response_enums(response.data, "MachineCreated"), MachineCreated
         ),
     )
 
@@ -247,7 +247,7 @@ def create_machine_sync(
     default_token_ttl: int | NotGiven = NOT_GIVEN,
     *,
     request_options: RequestOptions | None = None,
-) -> CreateMachineResponse:
+) -> MachineCreated:
     """Creates a new machine. Provide a `name` and optionally configure its machine scopes
     and default token TTL. The response includes the machine's secret key, so store it
     securely.
@@ -297,7 +297,7 @@ def create_machine_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "CreateMachineResponse"), CreateMachineResponse
+            _validate_response_enums(response.data, "MachineCreated"), MachineCreated
         ),
     )
 
@@ -504,7 +504,7 @@ async def delete_machine(
     machine_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> DeleteMachineResponse:
+) -> MachineDeleted:
     """Deletes a machine. Use its `machine_id` to identify the machine you want to remove.
     The response confirms deletion with the machine ID and a `deleted` value.
 
@@ -532,7 +532,7 @@ async def delete_machine(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "DeleteMachineResponse"), DeleteMachineResponse
+            _validate_response_enums(response.data, "MachineDeleted"), MachineDeleted
         ),
     )
 
@@ -542,7 +542,7 @@ def delete_machine_sync(
     machine_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> DeleteMachineResponse:
+) -> MachineDeleted:
     """Deletes a machine. Use its `machine_id` to identify the machine you want to remove.
     The response confirms deletion with the machine ID and a `deleted` value.
 
@@ -570,7 +570,7 @@ def delete_machine_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "DeleteMachineResponse"), DeleteMachineResponse
+            _validate_response_enums(response.data, "MachineDeleted"), MachineDeleted
         ),
     )
 
@@ -583,7 +583,7 @@ async def get_machine_secret_key(
     machine_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> GetMachineSecretKeyResponse:
+) -> MachineSecretKey:
     """Retrieves the secret key for a machine. Use the `machine_id` to identify which
     machine's key you need.
 
@@ -605,8 +605,7 @@ async def get_machine_secret_key(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "GetMachineSecretKeyResponse"),
-            GetMachineSecretKeyResponse,
+            _validate_response_enums(response.data, "MachineSecretKey"), MachineSecretKey
         ),
     )
 
@@ -616,7 +615,7 @@ def get_machine_secret_key_sync(
     machine_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> GetMachineSecretKeyResponse:
+) -> MachineSecretKey:
     """Retrieves the secret key for a machine. Use the `machine_id` to identify which
     machine's key you need.
 
@@ -638,8 +637,7 @@ def get_machine_secret_key_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "GetMachineSecretKeyResponse"),
-            GetMachineSecretKeyResponse,
+            _validate_response_enums(response.data, "MachineSecretKey"), MachineSecretKey
         ),
     )
 

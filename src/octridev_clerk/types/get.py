@@ -12,19 +12,6 @@ from octridev_clerk.client import NOT_GIVEN, NotGiven
 from ..validation import validate_pattern, validate_required
 
 
-class GetMachineSecretKeyResponse(BaseModel):
-    object: Literal["machine_secret_key"] | str
-    """String representing the object's type."""
-    secret: str
-    """The secret key for the machine."""
-
-    @model_validator(mode="before")
-    @classmethod
-    def _validate_required(cls, value):
-        validate_required(value, ["object", "secret"])
-        return value
-
-
 class GetM2MTokensResponseM2mTokensItem(BaseModel):
     model_config = ConfigDict(populate_by_name=False, arbitrary_types_allowed=True)
 

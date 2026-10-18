@@ -6,6 +6,41 @@ from __future__ import annotations
 from typing import Any
 
 WIRE_SCHEMAS_PART_5: dict[str, tuple[Any, dict[str, tuple[str, str | None]]]] = {
+    "UpdateSAMLConnectionLoginHint": (
+        None,
+        {
+            "mode": ("mode", None),
+            "source": ("source", None),
+        },
+    ),
+    "CreateEnterpriseConnectionSaml": (
+        None,
+        {
+            "idp_entity_id": ("idp_entity_id", None),
+            "idp_sso_url": ("idp_sso_url", None),
+            "idp_certificate": ("idp_certificate", None),
+            "idp_certificates": ("idp_certificates", None),
+            "idp_metadata_url": ("idp_metadata_url", None),
+            "idp_metadata": ("idp_metadata", None),
+            "attribute_mapping": ("attribute_mapping", None),
+            "allow_subdomains": ("allow_subdomains", None),
+            "allow_idp_initiated": ("allow_idp_initiated", None),
+            "force_authn": ("force_authn", None),
+            "login_hint": ("login_hint", None),
+        },
+    ),
+    "CreateEnterpriseConnectionOidc": (
+        None,
+        {
+            "client_id": ("client_id", None),
+            "client_secret": ("client_secret", None),
+            "discovery_url": ("discovery_url", None),
+            "auth_url": ("auth_url", None),
+            "token_url": ("token_url", None),
+            "user_info_url": ("user_info_url", None),
+            "requires_pkce": ("requires_pkce", None),
+        },
+    ),
     "CreateEnterpriseConnectionCustomAttributesItem": (
         None,
         {
@@ -195,7 +230,7 @@ WIRE_SCHEMAS_PART_5: dict[str, tuple[Any, dict[str, tuple[str, str | None]]]] = 
             "client_secret": ("client_secret", None),
         },
     ),
-    "RevokeInvitationResponse": (
+    "InvitationRevoked": (
         None,
         {
             "object": ("object", None),
@@ -210,7 +245,7 @@ WIRE_SCHEMAS_PART_5: dict[str, tuple[Any, dict[str, tuple[str, str | None]]]] = 
             "updated_at": ("updated_at", None),
         },
     ),
-    "CreateMachineResponse": (
+    "MachineCreated": (
         None,
         {
             "object": ("object", None),
@@ -247,6 +282,35 @@ WIRE_SCHEMAS_PART_5: dict[str, tuple[Any, dict[str, tuple[str, str | None]]]] = 
             "token_secret": ("token_secret", None),
         },
     ),
+    "OrganizationInvitationWithPublicOrganizationDataVariant0": (
+        None,
+        {
+            "object": ("object", None),
+            "id": ("id", None),
+            "email_address": ("email_address", None),
+            "role": ("role", None),
+            "role_name": ("role_name", None),
+            "organization_id": ("organization_id", None),
+            "inviter_id": ("inviter_id", None),
+            "public_inviter_data": ("public_inviter_data", "OrganizationInvitationPublicUserData"),
+            "status": ("status", None),
+            "public_metadata": ("public_metadata", None),
+            "private_metadata": ("private_metadata", None),
+            "url": ("url", None),
+            "expires_at": ("expires_at", None),
+            "created_at": ("created_at", None),
+            "updated_at": ("updated_at", None),
+        },
+    ),
+    "OrganizationInvitationWithPublicOrganizationDataVariant1": (
+        None,
+        {
+            "public_organization_data": (
+                "public_organization_data",
+                "OrganizationInvitationPublicOrganizationData",
+            ),
+        },
+    ),
     "MachineVariant1": (
         None,
         {
@@ -265,6 +329,14 @@ WIRE_SCHEMAS_PART_5: dict[str, tuple[Any, dict[str, tuple[str, str | None]]]] = 
         None,
         {
             "client_secret": ("client_secret", None),
+        },
+    ),
+    "SAMLConnectionIdpCertificatesItem": (
+        None,
+        {
+            "certificate": ("certificate", None),
+            "issued_at": ("issued_at", None),
+            "expires_at": ("expires_at", None),
         },
     ),
     "EnterpriseConnectionCustomAttributesItem": (
@@ -408,14 +480,53 @@ WIRE_SCHEMAS_PART_5: dict[str, tuple[Any, dict[str, tuple[str, str | None]]]] = 
             "multi_valued": ("multi_valued", None),
         },
     ),
-    "RevokeInvitationResponseVariant1": (
+    "VerifyOAuthAccessTokenResponseVariant0": (
+        None,
+        {
+            "object": ("object", None),
+            "id": ("id", None),
+            "client_id": ("client_id", None),
+            "subject": ("subject", None),
+            "scopes": ("scopes", None),
+            "aud": ("aud", None),
+            "act": ("act", "VerifyOAuthAccessTokenResponseVariant0Act"),
+            "revoked": ("revoked", None),
+            "revocation_reason": ("revocation_reason", None),
+            "expired": ("expired", None),
+            "expiration": ("expiration", None),
+            "created_at": ("created_at", None),
+            "updated_at": ("updated_at", None),
+        },
+    ),
+    "VerifyOAuthAccessTokenResponseVariant0Act": (
+        None,
+        {
+            "iss": ("iss", None),
+            "sub": ("sub", None),
+            "act": ("act", "VerifyOAuthAccessTokenResponseVariant0ActAct"),
+        },
+    ),
+    "VerifyOAuthAccessTokenResponseVariant0ActAct": (
+        None,
+        {
+            "iss": ("iss", None),
+            "sub": ("sub", None),
+        },
+    ),
+    "VerifyOAuthAccessTokenResponseVariant1": (
+        None,
+        {
+            "active": ("active", None),
+        },
+    ),
+    "InvitationRevokedVariant1": (
         None,
         {
             "revoked": ("revoked", None),
             "status": ("status", None),
         },
     ),
-    "CreateMachineResponseVariant1": (
+    "MachineCreatedVariant1": (
         None,
         {
             "secret_key": ("secret_key", None),
@@ -482,13 +593,6 @@ WIRE_SCHEMAS_PART_5: dict[str, tuple[Any, dict[str, tuple[str, str | None]]]] = 
             "email_address": ("email_address", None),
             "first_name": ("first_name", None),
             "last_name": ("last_name", None),
-        },
-    ),
-    "UpdateEnterpriseConnectionSamlLoginHint": (
-        None,
-        {
-            "mode": ("mode", None),
-            "source": ("source", None),
         },
     ),
 }

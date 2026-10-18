@@ -225,6 +225,52 @@ class OrganizationInvitationPublicOrganizationData(BaseModel):
         return value
 
 
+class OrganizationInvitationWithPublicOrganizationDataVariant0(BaseModel):
+    """Required object value serialized in the `data[]` wire field."""
+
+    model_config = ConfigDict(populate_by_name=False, arbitrary_types_allowed=True)
+
+    object: Literal["organization_invitation"] | str | NotGiven = NOT_GIVEN
+    """String representing the object's type. Objects of the same type share the same value."""
+    id: str | NotGiven = NOT_GIVEN
+    """Optional `string` value serialized in the `id` wire field."""
+    email_address: str | NotGiven = NOT_GIVEN
+    """Optional `string` value serialized in the `email_address` wire field."""
+    role: str | NotGiven = NOT_GIVEN
+    """Optional `string` value serialized in the `role` wire field."""
+    role_name: str | NotGiven = NOT_GIVEN
+    """Optional `string` value serialized in the `role_name` wire field."""
+    organization_id: str | NotGiven = NOT_GIVEN
+    """Optional `string` value serialized in the `organization_id` wire field."""
+    inviter_id: str | None | NotGiven = NOT_GIVEN
+    """Optional `string` value serialized in the `inviter_id` wire field."""
+    public_inviter_data: OrganizationInvitationPublicUserData | None | NotGiven = NOT_GIVEN
+    """An organization inviter's public user data"""
+    status: str | NotGiven = NOT_GIVEN
+    """Optional `string` value serialized in the `status` wire field."""
+    public_metadata: dict[str, Any] | NotGiven = NOT_GIVEN
+    """Optional object value serialized in the `public_metadata` wire field."""
+    private_metadata: dict[str, Any] | NotGiven = NOT_GIVEN
+    """Optional object value serialized in the `private_metadata` wire field."""
+    url: str | None | NotGiven = NOT_GIVEN
+    """Optional `string` value serialized in the `url` wire field."""
+    expires_at: int | None | NotGiven = NOT_GIVEN
+    """Unix timestamp of expiration."""
+    created_at: int | NotGiven = NOT_GIVEN
+    """Unix timestamp of creation."""
+    updated_at: int | NotGiven = NOT_GIVEN
+    """Unix timestamp of last update."""
+
+
+class OrganizationInvitationWithPublicOrganizationDataVariant1(BaseModel):
+    """Required object value serialized in the `data[]` wire field."""
+
+    model_config = ConfigDict(populate_by_name=False, arbitrary_types_allowed=True)
+
+    public_organization_data: OrganizationInvitationPublicOrganizationData | NotGiven = NOT_GIVEN
+    """Optional object value serialized in the `public_organization_data` wire field."""
+
+
 class OrganizationInvitationWithPublicOrganizationData(BaseModel):
     """An organization invitation with public organization data populated"""
 

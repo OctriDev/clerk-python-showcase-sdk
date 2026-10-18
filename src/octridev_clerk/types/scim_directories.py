@@ -142,3 +142,50 @@ class SCIMGroupRoleMapping(BaseModel):
 
 
 SCIMGroupRoleMappings = TypeAliasType("SCIMGroupRoleMappings", "list[SCIMGroupRoleMapping]")
+
+
+class SCIMGroupRoleMappingDeleted(BaseModel):
+    """Typed representation of the `SCIMGroupRoleMappingDeleted` API schema."""
+
+    object: Literal["scim_group_role_mapping"] | str
+    """String representing the object's type."""
+    id: str
+    """The ID of the deleted SCIM group role mapping."""
+    deleted: bool
+    """Whether the SCIM group role mapping was successfully deleted."""
+
+    @model_validator(mode="before")
+    @classmethod
+    def _validate_required(cls, value):
+        validate_required(value, ["object", "id", "deleted"])
+        return value
+
+
+class SCIMDirectoryList(BaseModel):
+    """Typed representation of the `SCIMDirectoryList` API schema."""
+
+    data: SCIMDirectories
+    """Required array value serialized in the `data` wire field."""
+    total_count: int
+    """Total number of directories."""
+
+    @model_validator(mode="before")
+    @classmethod
+    def _validate_required(cls, value):
+        validate_required(value, ["data", "total_count"])
+        return value
+
+
+class SCIMGroupRoleMappingList(BaseModel):
+    """Typed representation of the `SCIMGroupRoleMappingList` API schema."""
+
+    data: SCIMGroupRoleMappings
+    """Required array value serialized in the `data` wire field."""
+    total_count: int
+    """Total number of SCIM group role mappings in the directory."""
+
+    @model_validator(mode="before")
+    @classmethod
+    def _validate_required(cls, value):
+        validate_required(value, ["data", "total_count"])
+        return value

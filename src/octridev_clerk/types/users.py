@@ -16,28 +16,31 @@ from .users_part001 import (
     TotalCount,
     TrustedDevice,
     User,
-    VerificationOauth,
-    VerificationPasskey,
     VerificationWeb3,
 )
 from .users_part002 import (
+    BiometricCredentialList,
     EnterpriseAccount,
     EnterpriseAccountVerification,
     ExternalAccountWithVerification,
     ExternalAccountWithVerificationVerification,
     SAMLAccount,
     SAMLAccountVerification,
+    TrustedDeviceList,
     UnknownEnterpriseAccountVerification,
     UnknownExternalAccountWithVerificationVerification,
     UnknownSAMLAccountVerification,
     UnknownWeb3WalletVerification,
     VerificationGoogleOneTap,
+    VerificationOauth,
+    VerificationPasskey,
     Web3Wallet,
     Web3WalletVerification,
 )
 
 __all__ = [
     "BiometricCredential",
+    "BiometricCredentialList",
     "EnterpriseAccount",
     "EnterpriseAccountConnection",
     "EnterpriseAccountVerification",
@@ -54,6 +57,7 @@ __all__ = [
     "SCIMUserMetadataGroupsItem",
     "TotalCount",
     "TrustedDevice",
+    "TrustedDeviceList",
     "UnknownEnterpriseAccountVerification",
     "UnknownExternalAccountWithVerificationVerification",
     "UnknownSAMLAccountVerification",
@@ -75,12 +79,15 @@ _deferred_users_part001: tuple[tuple[str, object], ...] = (
     ("EnterpriseAccount", EnterpriseAccount),
     ("ExternalAccountWithVerification", ExternalAccountWithVerification),
     ("SAMLAccount", SAMLAccount),
+    ("VerificationPasskey", VerificationPasskey),
     ("Web3Wallet", Web3Wallet),
 )
 for _name, _value in _deferred_users_part001:
     setattr(_users_part001, _name, _value)
 
 Passkey.model_rebuild()
+SAMLAccountConnection.model_rebuild()
+EnterpriseAccountConnection.model_rebuild()
 SCIMUserMetadataGroupsItem.model_rebuild()
 SCIMUserMetadata.model_rebuild()
 User.model_rebuild()
@@ -89,5 +96,3 @@ OAuthAccessTokenItem.model_rebuild()
 TrustedDevice.model_rebuild()
 BiometricCredential.model_rebuild()
 VerificationWeb3.model_rebuild()
-VerificationPasskey.model_rebuild()
-VerificationOauth.model_rebuild()

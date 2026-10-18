@@ -52,3 +52,18 @@ class WaitlistEntry(BaseModel):
     def _validate_email_address(cls, value):
         validate_email("email_address", value)
         return value
+
+
+class WaitlistEntries(BaseModel):
+    """Typed representation of the `WaitlistEntries` API schema."""
+
+    data: list[WaitlistEntry]
+    """Required array value serialized in the `data` wire field."""
+    total_count: int
+    """Total number of waitlist entries"""
+
+    @model_validator(mode="before")
+    @classmethod
+    def _validate_required(cls, value):
+        validate_required(value, ["data", "total_count"])
+        return value

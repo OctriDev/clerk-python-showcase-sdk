@@ -57,9 +57,9 @@ class BillingPriceResponse(BaseModel):
     annual_monthly_amount: int
     """The monthly amount in cents when billed annually."""
     fee: CommerceMoneyResponse | None
-    """Required API value serialized in the `fee` wire field."""
+    """Required object value serialized in the `fee` wire field."""
     annual_monthly_fee: CommerceMoneyResponse | None
-    """Required API value serialized in the `annual_monthly_fee` wire field."""
+    """Required object value serialized in the `annual_monthly_fee` wire field."""
     is_default: bool
     """Whether this price is the default price for its plan."""
     created_at: int
@@ -208,11 +208,11 @@ class CommercePlan2(BaseModel):
     name: str
     """The name of the commerce plan."""
     fee: CommerceMoneyResponse | None
-    """Required API value serialized in the `fee` wire field."""
+    """Required object value serialized in the `fee` wire field."""
     annual_monthly_fee: CommerceMoneyResponse | None
-    """Required API value serialized in the `annual_monthly_fee` wire field."""
+    """Required object value serialized in the `annual_monthly_fee` wire field."""
     annual_fee: CommerceMoneyResponse | None
-    """Required API value serialized in the `annual_fee` wire field."""
+    """Required object value serialized in the `annual_fee` wire field."""
     amount: int
     """The amount in cents for the plan."""
     amount_formatted: str

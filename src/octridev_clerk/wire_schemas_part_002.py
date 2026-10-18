@@ -6,6 +6,33 @@ from __future__ import annotations
 from typing import Any
 
 WIRE_SCHEMAS_PART_2: dict[str, tuple[Any, dict[str, tuple[str, str | None]]]] = {
+    "CommerceSubscriptionItemNextPaymentResponse": (
+        None,
+        {
+            "amount": ("amount", "CommerceMoneyResponse"),
+            "date": ("date", None),
+            "per_unit_totals": ("per_unit_totals", "CommercePerUnitTotal"),
+            "totals": ("totals", "CommerceTotalsResponse"),
+        },
+    ),
+    "CommercePayerResponse": (
+        None,
+        {
+            "object": ("object", None),
+            "id": ("id", None),
+            "instance_id": ("instance_id", None),
+            "user_id": ("user_id", None),
+            "first_name": ("first_name", None),
+            "last_name": ("last_name", None),
+            "email": ("email", None),
+            "organization_id": ("organization_id", None),
+            "organization_name": ("organization_name", None),
+            "image_url": ("image_url", None),
+            "credits_balance": ("credits_balance", "CommerceMoneyResponse"),
+            "created_at": ("created_at", None),
+            "updated_at": ("updated_at", None),
+        },
+    ),
     "CommercePerUnitTotalTier2": (
         None,
         {
@@ -573,26 +600,6 @@ WIRE_SCHEMAS_PART_2: dict[str, tuple[Any, dict[str, tuple[str, str | None]]]] = 
             "url": ("url", None),
             "created_at": ("created_at", None),
             "updated_at": ("updated_at", None),
-        },
-    ),
-    "SignInToken": (
-        None,
-        {
-            "object": ("object", None),
-            "id": ("id", None),
-            "status": ("status", None),
-            "user_id": ("user_id", None),
-            "token": ("token", None),
-            "url": ("url", None),
-            "created_at": ("created_at", None),
-            "updated_at": ("updated_at", None),
-        },
-    ),
-    "SignUpVerification": (
-        None,
-        {
-            "next_action": ("next_action", None),
-            "supported_strategies": ("supported_strategies", None),
         },
     ),
 }

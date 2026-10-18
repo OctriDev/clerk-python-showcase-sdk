@@ -15,6 +15,7 @@ from .wire_schemas_part_002 import WIRE_SCHEMAS_PART_2
 from .wire_schemas_part_003 import WIRE_SCHEMAS_PART_3
 from .wire_schemas_part_004 import WIRE_SCHEMAS_PART_4
 from .wire_schemas_part_005 import WIRE_SCHEMAS_PART_5
+from .wire_schemas_part_006 import WIRE_SCHEMAS_PART_6
 
 _MISSING = object()
 
@@ -25,6 +26,7 @@ _WIRE_SCHEMAS: dict[str, tuple[Any, dict[str, tuple[str, str | None]]]] = {
     **WIRE_SCHEMAS_PART_3,
     **WIRE_SCHEMAS_PART_4,
     **WIRE_SCHEMAS_PART_5,
+    **WIRE_SCHEMAS_PART_6,
 }
 
 # Models whose schema admits keys it does not declare: decoding keeps them.

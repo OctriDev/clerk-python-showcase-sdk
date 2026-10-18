@@ -3,13 +3,13 @@
 
 from __future__ import annotations
 
-from typing import Annotated, Any, Literal, TypeAlias
+from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, WrapValidator, model_validator
+from pydantic import BaseModel, ConfigDict, model_validator
 
 from octridev_clerk.client import NOT_GIVEN, NotGiven
 
-from ..validation import validate_required, validate_union_candidate
+from ..validation import validate_required
 
 
 class SAMLConnectionAttributeMapping(BaseModel):
@@ -48,8 +48,124 @@ class SAMLConnectionLoginHint(BaseModel):
         return value
 
 
-# SAMLConnection is a union type
-SAMLConnection: TypeAlias = Annotated[Any, WrapValidator(validate_union_candidate)]
+class SAMLConnectionIdpCertificatesItem(BaseModel):
+    """Required object value serialized in the `idp_certificates[]` wire field."""
+
+    certificate: str
+    """The X.509 certificate, base64 DER without PEM armor"""
+    issued_at: int | None
+    """Unix timestamp (milliseconds) of the X.509 NotBefore"""
+    expires_at: int | None
+    """Unix timestamp (milliseconds) of the X.509 NotAfter"""
+
+    @model_validator(mode="before")
+    @classmethod
+    def _validate_required(cls, value):
+        validate_required(value, ["certificate", "issued_at", "expires_at"])
+        return value
+
+
+class SAMLConnection(BaseModel):
+    """Typed representation of the `SAMLConnection` API schema."""
+
+    model_config = ConfigDict(populate_by_name=False, arbitrary_types_allowed=True)
+
+    object: Literal["saml_connection"] | str
+    """Required enumerated value serialized in the `object` wire field."""
+    id: str
+    """Required `string` value serialized in the `id` wire field."""
+    name: str
+    """Required `string` value serialized in the `name` wire field."""
+    idp_entity_id: str | None
+    """Required `string` value serialized in the `idp_entity_id` wire field."""
+    idp_sso_url: str | None
+    """Required `string` value serialized in the `idp_sso_url` wire field."""
+    idp_certificate: str | None
+    """Required `string` value serialized in the `idp_certificate` wire field."""
+    idp_certificate_issued_at: int | None
+    """Unix timestamp (milliseconds) of the start of the IdP certificate validity window (X.509 NotBefore). Null when no certificate is configured."""
+    idp_certificate_expires_at: int | None
+    """Unix timestamp (milliseconds) of the end of the IdP certificate validity window (X.509 NotAfter). Null when no certificate is configured."""
+    idp_certificates: list[SAMLConnectionIdpCertificatesItem]
+    """Every IdP signing certificate the connection trusts, primary first. A SAML response verifies against any of them."""
+    acs_url: str
+    """Required `string` value serialized in the `acs_url` wire field."""
+    sp_entity_id: str
+    """Required `string` value serialized in the `sp_entity_id` wire field."""
+    sp_metadata_url: str
+    """Required `string` value serialized in the `sp_metadata_url` wire field."""
+    active: bool
+    """Required `boolean` value serialized in the `active` wire field."""
+    provider: str
+    """Required `string` value serialized in the `provider` wire field."""
+    user_count: int
+    """Required `integer` value serialized in the `user_count` wire field."""
+    sync_user_attributes: bool
+    """Required `boolean` value serialized in the `sync_user_attributes` wire field."""
+    allow_subdomains: bool
+    """Required `boolean` value serialized in the `allow_subdomains` wire field."""
+    allow_idp_initiated: bool
+    """Required `boolean` value serialized in the `allow_idp_initiated` wire field."""
+    disable_additional_identifications: bool
+    """Required `boolean` value serialized in the `disable_additional_identifications` wire field."""
+    allow_organization_account_linking: bool
+    """Required `boolean` value serialized in the `allow_organization_account_linking` wire field."""
+    force_authn: bool
+    """Enable or deactivate ForceAuthn"""
+    login_hint: SAMLConnectionLoginHint
+    """Configuration for the login_hint sent to the IdP on SSO sign-in"""
+    created_at: int
+    """Unix timestamp of creation."""
+    updated_at: int
+    """Unix timestamp of last update."""
+    domain: str | NotGiven = NOT_GIVEN
+    """Optional `string` value serialized in the `domain` wire field."""
+    domains: list[str] | NotGiven = NOT_GIVEN
+    """Optional array value serialized in the `domains` wire field."""
+    idp_metadata_url: str | None | NotGiven = NOT_GIVEN
+    """Optional `string` value serialized in the `idp_metadata_url` wire field."""
+    idp_metadata: str | None | NotGiven = NOT_GIVEN
+    """Optional `string` value serialized in the `idp_metadata` wire field."""
+    organization_id: str | None | NotGiven = NOT_GIVEN
+    """Optional `string` value serialized in the `organization_id` wire field."""
+    attribute_mapping: SAMLConnectionAttributeMapping | NotGiven = NOT_GIVEN
+    """Optional object value serialized in the `attribute_mapping` wire field."""
+    enterprise_connection_id: str | None | NotGiven = NOT_GIVEN
+    """Optional `string` value serialized in the `enterprise_connection_id` wire field."""
+
+    @model_validator(mode="before")
+    @classmethod
+    def _validate_required(cls, value):
+        validate_required(
+            value,
+            [
+                "object",
+                "id",
+                "name",
+                "idp_entity_id",
+                "idp_sso_url",
+                "idp_certificate",
+                "idp_certificate_issued_at",
+                "idp_certificate_expires_at",
+                "idp_certificates",
+                "acs_url",
+                "sp_entity_id",
+                "sp_metadata_url",
+                "active",
+                "provider",
+                "user_count",
+                "sync_user_attributes",
+                "allow_subdomains",
+                "allow_idp_initiated",
+                "disable_additional_identifications",
+                "allow_organization_account_linking",
+                "force_authn",
+                "login_hint",
+                "created_at",
+                "updated_at",
+            ],
+        )
+        return value
 
 
 class SAMLConnections(BaseModel):

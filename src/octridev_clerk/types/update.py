@@ -12,19 +12,6 @@ from octridev_clerk.client import NOT_GIVEN, NotGiven
 from ..validation import validate_length, validate_pattern, validate_required
 
 
-class UpdateInstanceAuthConfigResponse(BaseModel):
-    model_config = ConfigDict(populate_by_name=False, arbitrary_types_allowed=True)
-
-    object: Literal["instance_settings"] | str | NotGiven = NOT_GIVEN
-    """String representing the object's type. Objects of the same type share the same value."""
-    id: str | NotGiven = NOT_GIVEN
-    restricted_to_allowlist: bool | NotGiven = NOT_GIVEN
-    from_email_address: str | NotGiven = NOT_GIVEN
-    progressive_sign_up: bool | NotGiven = NOT_GIVEN
-    enhanced_email_deliverability: bool | NotGiven = NOT_GIVEN
-    """Deprecated. This setting is retired and no longer affects email delivery; all email is sent through the instance's configured email sending domain. The field is preserved for API compatibility only and will be removed in a future version."""
-
-
 class UpdateApiKeyResponse(BaseModel):
     model_config = ConfigDict(populate_by_name=False, arbitrary_types_allowed=True)
 

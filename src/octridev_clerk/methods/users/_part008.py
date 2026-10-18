@@ -21,12 +21,12 @@ from octridev_clerk.client import (
 from octridev_clerk.errors import SdkValidationError, sdk_decode
 from octridev_clerk.types import (
     BiometricCredential,
+    BiometricCredentialList,
     ClerkErrors,
     DeletedObject,
     DeleteTOTPResponse,
-    ListUserBiometricCredentialsResponse,
-    ListUserTrustedDevicesResponse,
     TrustedDevice,
+    TrustedDeviceList,
     User,
 )
 from octridev_clerk.wire import _validate_response_enums, to_wire
@@ -66,7 +66,7 @@ async def list_user_trusted_devices(
     user_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> ListUserTrustedDevicesResponse:
+) -> TrustedDeviceList:
     """Returns the active trusted devices enrolled by the user.
 
     .. deprecated::
@@ -88,8 +88,7 @@ async def list_user_trusted_devices(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "ListUserTrustedDevicesResponse"),
-            ListUserTrustedDevicesResponse,
+            _validate_response_enums(response.data, "TrustedDeviceList"), TrustedDeviceList
         ),
     )
 
@@ -99,7 +98,7 @@ def list_user_trusted_devices_sync(
     user_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> ListUserTrustedDevicesResponse:
+) -> TrustedDeviceList:
     """Returns the active trusted devices enrolled by the user.
 
     .. deprecated::
@@ -121,8 +120,7 @@ def list_user_trusted_devices_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "ListUserTrustedDevicesResponse"),
-            ListUserTrustedDevicesResponse,
+            _validate_response_enums(response.data, "TrustedDeviceList"), TrustedDeviceList
         ),
     )
 
@@ -206,7 +204,7 @@ async def list_user_biometric_credentials(
     user_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> ListUserBiometricCredentialsResponse:
+) -> BiometricCredentialList:
     """Returns the active biometric credentials enrolled by the user.
 
     Args:
@@ -225,8 +223,8 @@ async def list_user_biometric_credentials(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "ListUserBiometricCredentialsResponse"),
-            ListUserBiometricCredentialsResponse,
+            _validate_response_enums(response.data, "BiometricCredentialList"),
+            BiometricCredentialList,
         ),
     )
 
@@ -236,7 +234,7 @@ def list_user_biometric_credentials_sync(
     user_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> ListUserBiometricCredentialsResponse:
+) -> BiometricCredentialList:
     """Returns the active biometric credentials enrolled by the user.
 
     Args:
@@ -255,8 +253,8 @@ def list_user_biometric_credentials_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "ListUserBiometricCredentialsResponse"),
-            ListUserBiometricCredentialsResponse,
+            _validate_response_enums(response.data, "BiometricCredentialList"),
+            BiometricCredentialList,
         ),
     )
 

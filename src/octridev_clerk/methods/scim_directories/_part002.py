@@ -21,10 +21,10 @@ from octridev_clerk.client import (
 from octridev_clerk.errors import SdkValidationError, sdk_decode
 from octridev_clerk.types import (
     ClerkErrors,
-    DeleteSCIMGroupRoleMappingResponse,
-    ListSCIMGroupRoleMappingsResponse,
     ReplaceSCIMGroupRoleMappingsMappingsItem,
     SCIMGroupRoleMapping,
+    SCIMGroupRoleMappingDeleted,
+    SCIMGroupRoleMappingList,
 )
 from octridev_clerk.validation import validate_range
 from octridev_clerk.wire import _validate_response_enums, to_wire
@@ -186,7 +186,7 @@ async def replace_scim_group_role_mappings(
     mappings: list[ReplaceSCIMGroupRoleMappingsMappingsItem],
     *,
     request_options: RequestOptions | None = None,
-) -> ListSCIMGroupRoleMappingsResponse:
+) -> SCIMGroupRoleMappingList:
     """Replaces the entire set of SCIM group role mappings for a directory. The position of
     each item in the `mappings` array determines its precedence (the first item gets
     precedence 1). Passing an empty array removes all mappings. Mappings can be replaced
@@ -226,8 +226,8 @@ async def replace_scim_group_role_mappings(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "ListSCIMGroupRoleMappingsResponse"),
-            ListSCIMGroupRoleMappingsResponse,
+            _validate_response_enums(response.data, "SCIMGroupRoleMappingList"),
+            SCIMGroupRoleMappingList,
         ),
     )
 
@@ -238,7 +238,7 @@ def replace_scim_group_role_mappings_sync(
     mappings: list[ReplaceSCIMGroupRoleMappingsMappingsItem],
     *,
     request_options: RequestOptions | None = None,
-) -> ListSCIMGroupRoleMappingsResponse:
+) -> SCIMGroupRoleMappingList:
     """Replaces the entire set of SCIM group role mappings for a directory. The position of
     each item in the `mappings` array determines its precedence (the first item gets
     precedence 1). Passing an empty array removes all mappings. Mappings can be replaced
@@ -278,8 +278,8 @@ def replace_scim_group_role_mappings_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "ListSCIMGroupRoleMappingsResponse"),
-            ListSCIMGroupRoleMappingsResponse,
+            _validate_response_enums(response.data, "SCIMGroupRoleMappingList"),
+            SCIMGroupRoleMappingList,
         ),
     )
 
@@ -293,7 +293,7 @@ async def delete_scim_group_role_mapping(
     mapping_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> DeleteSCIMGroupRoleMappingResponse:
+) -> SCIMGroupRoleMappingDeleted:
     """Deletes a single SCIM group role mapping. Mappings can be deleted while group role
     mapping is disabled on the directory, but the change only takes effect once it is
     enabled.
@@ -315,8 +315,8 @@ async def delete_scim_group_role_mapping(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "DeleteSCIMGroupRoleMappingResponse"),
-            DeleteSCIMGroupRoleMappingResponse,
+            _validate_response_enums(response.data, "SCIMGroupRoleMappingDeleted"),
+            SCIMGroupRoleMappingDeleted,
         ),
     )
 
@@ -327,7 +327,7 @@ def delete_scim_group_role_mapping_sync(
     mapping_id: str,
     *,
     request_options: RequestOptions | None = None,
-) -> DeleteSCIMGroupRoleMappingResponse:
+) -> SCIMGroupRoleMappingDeleted:
     """Deletes a single SCIM group role mapping. Mappings can be deleted while group role
     mapping is disabled on the directory, but the change only takes effect once it is
     enabled.
@@ -349,8 +349,8 @@ def delete_scim_group_role_mapping_sync(
     return sdk_decode(
         _resp,
         lambda response: _validate_pydantic_response(
-            _validate_response_enums(response.data, "DeleteSCIMGroupRoleMappingResponse"),
-            DeleteSCIMGroupRoleMappingResponse,
+            _validate_response_enums(response.data, "SCIMGroupRoleMappingDeleted"),
+            SCIMGroupRoleMappingDeleted,
         ),
     )
 

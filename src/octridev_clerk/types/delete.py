@@ -24,36 +24,6 @@ class DeleteTOTPResponse(BaseModel):
     user_id: str | NotGiven = NOT_GIVEN
 
 
-class DeleteSCIMGroupRoleMappingResponse(BaseModel):
-    object: Literal["scim_group_role_mapping"] | str
-    """String representing the object's type."""
-    id: str
-    """The ID of the deleted SCIM group role mapping."""
-    deleted: bool
-    """Whether the SCIM group role mapping was successfully deleted."""
-
-    @model_validator(mode="before")
-    @classmethod
-    def _validate_required(cls, value):
-        validate_required(value, ["object", "id", "deleted"])
-        return value
-
-
-class DeleteDirectoryGroupRoleMappingResponse(BaseModel):
-    object: Literal["directory_group_role_mapping"] | str
-    """String representing the object's type."""
-    id: str
-    """The ID of the deleted directory group role mapping."""
-    deleted: bool
-    """Whether the directory group role mapping was successfully deleted."""
-
-    @model_validator(mode="before")
-    @classmethod
-    def _validate_required(cls, value):
-        validate_required(value, ["object", "id", "deleted"])
-        return value
-
-
 class DeleteApiKeyResponse(BaseModel):
     id: str
     """@example "ak_3beecc9c60adb5f9b850e91a8ee1e992" """

@@ -83,9 +83,9 @@ class CommerceCreditsResponse(BaseModel):
     """Typed representation of the `CommerceCreditsResponse` API schema."""
 
     proration: CommerceProrationCreditDetailResponse | None
-    """Required API value serialized in the `proration` wire field."""
+    """Required object value serialized in the `proration` wire field."""
     payer: CommercePayerCreditResponse | None
-    """Required API value serialized in the `payer` wire field."""
+    """Required object value serialized in the `payer` wire field."""
     total: CommerceMoneyResponse
     """Required object value serialized in the `total` wire field."""
 
@@ -144,11 +144,11 @@ class CommercePlan(BaseModel):
     name: str
     """The name of the plan."""
     fee: CommerceMoneyResponse | None
-    """Required API value serialized in the `fee` wire field."""
+    """Required object value serialized in the `fee` wire field."""
     annual_monthly_fee: CommerceMoneyResponse | None
-    """Required API value serialized in the `annual_monthly_fee` wire field."""
+    """Required object value serialized in the `annual_monthly_fee` wire field."""
     annual_fee: CommerceMoneyResponse | None
-    """Required API value serialized in the `annual_fee` wire field."""
+    """Required object value serialized in the `annual_fee` wire field."""
     description: str | None
     """The description of the plan."""
     product_id: str
@@ -326,7 +326,7 @@ class CommerceDiscountsResponse(BaseModel):
     """Typed representation of the `CommerceDiscountsResponse` API schema."""
 
     proration: CommerceProrationDiscountResponse | None
-    """Required API value serialized in the `proration` wire field."""
+    """Required object value serialized in the `proration` wire field."""
     total: CommerceMoneyResponse
     """Required object value serialized in the `total` wire field."""
 
@@ -353,9 +353,9 @@ class CommerceTotalsResponse(BaseModel):
     per_unit_totals: list[CommercePerUnitTotal] | NotGiven = NOT_GIVEN
     """Optional array value serialized in the `per_unit_totals` wire field."""
     credits: CommerceCreditsResponse | None | NotGiven = NOT_GIVEN
-    """Optional API value serialized in the `credits` wire field."""
+    """Optional object value serialized in the `credits` wire field."""
     discounts: CommerceDiscountsResponse | None | NotGiven = NOT_GIVEN
-    """Optional API value serialized in the `discounts` wire field."""
+    """Optional object value serialized in the `discounts` wire field."""
 
     @model_validator(mode="before")
     @classmethod

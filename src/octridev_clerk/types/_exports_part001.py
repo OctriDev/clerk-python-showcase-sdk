@@ -4,6 +4,7 @@
 from .actor_tokens import ActorToken
 from .agent_tasks import AgentTask
 from .allow_list_block_list import AllowlistIdentifier, BlocklistIdentifier, BlocklistIdentifiers
+from .beta_features import InstanceSettings
 from .billing import (
     ApplyCommerceDiscountRequest,
     BillingPaymentAttempt,
@@ -36,8 +37,6 @@ from .create import (
     CreateApiKeyResponse,
     CreateDirectoryGroupRoleMappingsItem,
     CreateM2MTokenResponse,
-    CreateMachineResponse,
-    CreateMachineResponseVariant1,
     CreateSCIMDirectoryGroupRoleMappingsItem,
 )
 from .create_enterprise_connection import (
@@ -52,20 +51,16 @@ from .create_samlconnection import (
     CreateSAMLConnectionLoginHint,
 )
 from .create_session_token import CreateSessionTokenFromTemplateResponse, CreateSessionTokenResponse
-from .delete import (
-    DeleteApiKeyResponse,
-    DeleteBackupCodeResponse,
-    DeleteDirectoryGroupRoleMappingResponse,
-    DeleteSCIMGroupRoleMappingResponse,
-    DeleteTOTPResponse,
-)
-from .delete_machine import DeleteMachineResponse, DeleteMachineScopeResponse
+from .delete import DeleteApiKeyResponse, DeleteBackupCodeResponse, DeleteTOTPResponse
 from .directories import (
     Directories,
     Directory,
     DirectoryCustomAttributesItem,
     DirectoryGroupRoleMapping,
+    DirectoryGroupRoleMappingDeleted,
+    DirectoryGroupRoleMappingList,
     DirectoryGroupRoleMappings,
+    DirectoryList,
 )
 from .domains import CNameTarget, DNSTarget, Domain, Domains
 from .email_sms_templates import Template
@@ -85,11 +80,7 @@ from .enterprise_connections import (
     EnterpriseConnectionTestRuns,
     EnterpriseConnectionTestRunSaml,
 )
-from .get import (
-    GetM2MTokensResponse,
-    GetM2MTokensResponseM2mTokensItem,
-    GetMachineSecretKeyResponse,
-)
+from .get import GetM2MTokensResponse, GetM2MTokensResponseM2mTokensItem
 from .get_api_key import GetApiKeyResponse, GetApiKeySecretResponse
 from .instance_settings import (
     Instance,
@@ -99,6 +90,7 @@ from .instance_settings import (
     OAuthApplicationSettings,
     OrganizationSettings,
 )
+from .invitations import InvitationRevoked, InvitationRevokedVariant1
 from .jwks import (
     JWKS,
     JWKSEcdsaPrivateKey,
@@ -111,19 +103,26 @@ from .jwks import (
     JWKSSymmetricKey,
 )
 from .jwt_templates import JWTTemplate
-from .list import (
-    ListApiKeysResponse,
-    ListApiKeysResponseDataItem,
-    ListDirectoriesResponse,
-    ListDirectoryGroupRoleMappingsResponse,
-    ListMachinesResponse,
-    ListSCIMDirectoriesResponse,
-    ListSCIMGroupRoleMappingsResponse,
-    ListWaitlistEntriesResponse,
+from .machines import (
+    Machine,
+    MachineCreated,
+    MachineCreatedVariant1,
+    MachineDeleted,
+    MachineList,
+    MachineScope,
+    MachineScopeDeleted,
+    MachineSecretKey,
+    MachineVariant1,
+    MachineWithoutScopedMachines,
 )
-from .list_user import ListUserBiometricCredentialsResponse, ListUserTrustedDevicesResponse
-from .machines import Machine, MachineScope, MachineVariant1, MachineWithoutScopedMachines
-from .misc import DisableMFAResponse, PrepareEmailAddressVerificationResponse
+from .misc import DisableMFAResponse, ListApiKeysResponse, ListApiKeysResponseDataItem
+from .oauth_access_tokens import (
+    VerifyOAuthAccessTokenResponse,
+    VerifyOAuthAccessTokenResponseVariant0,
+    VerifyOAuthAccessTokenResponseVariant0Act,
+    VerifyOAuthAccessTokenResponseVariant0ActAct,
+    VerifyOAuthAccessTokenResponseVariant1,
+)
 from .oauth_applications import (
     OAuthApplication,
     OAuthApplications,
@@ -145,7 +144,7 @@ from .replace import (
     ReplaceDirectoryGroupRoleMappingsMappingsItem,
     ReplaceSCIMGroupRoleMappingsMappingsItem,
 )
-from .revoke import RevokeAdminPortalLinkTokenResponse, RevokeApiKeyResponse
+from .revoke import RevokeAdminPortalLinkTokenResponse
 
 __all__ = [
     "JWKS",
@@ -181,8 +180,6 @@ __all__ = [
     "CreateEnterpriseConnectionSamlAttributeMapping",
     "CreateEnterpriseConnectionSamlLoginHint",
     "CreateM2MTokenResponse",
-    "CreateMachineResponse",
-    "CreateMachineResponseVariant1",
     "CreateSAMLConnectionAttributeMapping",
     "CreateSAMLConnectionLoginHint",
     "CreateSCIMDirectoryGroupRoleMappingsItem",
@@ -191,16 +188,15 @@ __all__ = [
     "DNSTarget",
     "DeleteApiKeyResponse",
     "DeleteBackupCodeResponse",
-    "DeleteDirectoryGroupRoleMappingResponse",
-    "DeleteMachineResponse",
-    "DeleteMachineScopeResponse",
-    "DeleteSCIMGroupRoleMappingResponse",
     "DeleteTOTPResponse",
     "Directories",
     "Directory",
     "DirectoryCustomAttributesItem",
     "DirectoryGroupRoleMapping",
+    "DirectoryGroupRoleMappingDeleted",
+    "DirectoryGroupRoleMappingList",
     "DirectoryGroupRoleMappings",
+    "DirectoryList",
     "DisableMFAResponse",
     "Domain",
     "Domains",
@@ -224,11 +220,13 @@ __all__ = [
     "GetApiKeySecretResponse",
     "GetM2MTokensResponse",
     "GetM2MTokensResponseM2mTokensItem",
-    "GetMachineSecretKeyResponse",
     "Instance",
     "InstanceCommunication",
     "InstanceProtect",
     "InstanceRestrictions",
+    "InstanceSettings",
+    "InvitationRevoked",
+    "InvitationRevokedVariant1",
     "JWKSEcdsaPrivateKey",
     "JWKSEcdsaPublicKey",
     "JWKSEd25519PrivateKey",
@@ -240,16 +238,14 @@ __all__ = [
     "JWTTemplate",
     "ListApiKeysResponse",
     "ListApiKeysResponseDataItem",
-    "ListDirectoriesResponse",
-    "ListDirectoryGroupRoleMappingsResponse",
-    "ListMachinesResponse",
-    "ListSCIMDirectoriesResponse",
-    "ListSCIMGroupRoleMappingsResponse",
-    "ListUserBiometricCredentialsResponse",
-    "ListUserTrustedDevicesResponse",
-    "ListWaitlistEntriesResponse",
     "Machine",
+    "MachineCreated",
+    "MachineCreatedVariant1",
+    "MachineDeleted",
+    "MachineList",
     "MachineScope",
+    "MachineScopeDeleted",
+    "MachineSecretKey",
     "MachineVariant1",
     "MachineWithoutScopedMachines",
     "OAuthApplication",
@@ -272,14 +268,17 @@ __all__ = [
     "PaginatedCommercePlanResponse",
     "PaginatedCommerceSubscriptionItemResponse",
     "Permissions",
-    "PrepareEmailAddressVerificationResponse",
     "PriceTransitionRequest",
     "ProxyCheck",
     "RedirectURL",
     "ReplaceDirectoryGroupRoleMappingsMappingsItem",
     "ReplaceSCIMGroupRoleMappingsMappingsItem",
     "RevokeAdminPortalLinkTokenResponse",
-    "RevokeApiKeyResponse",
     "Roles",
     "Template",
+    "VerifyOAuthAccessTokenResponse",
+    "VerifyOAuthAccessTokenResponseVariant0",
+    "VerifyOAuthAccessTokenResponseVariant0Act",
+    "VerifyOAuthAccessTokenResponseVariant0ActAct",
+    "VerifyOAuthAccessTokenResponseVariant1",
 ]

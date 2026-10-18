@@ -6,6 +6,40 @@ from __future__ import annotations
 from typing import Any
 
 WIRE_SCHEMAS_PART_4: dict[str, tuple[Any, dict[str, tuple[str, str | None]]]] = {
+    "VerificationAdmin": (
+        None,
+        {
+            "object": ("object", None),
+            "status": ("status", None),
+            "strategy": ("strategy", None),
+            "attempts": ("attempts", None),
+            "expire_at": ("expire_at", None),
+            "verified_at_client": ("verified_at_client", None),
+        },
+    ),
+    "VerificationFromOauth": (
+        None,
+        {
+            "object": ("object", None),
+            "status": ("status", None),
+            "strategy": ("strategy", None),
+            "error": ("error", "union:ClerkError"),
+            "expire_at": ("expire_at", None),
+            "attempts": ("attempts", None),
+            "verified_at_client": ("verified_at_client", None),
+        },
+    ),
+    "VerificationTicket": (
+        None,
+        {
+            "object": ("object", None),
+            "status": ("status", None),
+            "strategy": ("strategy", None),
+            "attempts": ("attempts", None),
+            "expire_at": ("expire_at", None),
+            "verified_at_client": ("verified_at_client", None),
+        },
+    ),
     "VerificationSaml": (
         None,
         {
@@ -91,7 +125,7 @@ WIRE_SCHEMAS_PART_4: dict[str, tuple[Any, dict[str, tuple[str, str | None]]]] = 
             "error": ("error", "union:ClerkError"),
         },
     ),
-    "PrepareEmailAddressVerificationResponse": (
+    "VerificationResponse": (
         None,
         {
             "object": ("object", None),
@@ -101,6 +135,113 @@ WIRE_SCHEMAS_PART_4: dict[str, tuple[Any, dict[str, tuple[str, str | None]]]] = 
             "attempts": ("attempts", None),
             "expire_at": ("expire_at", None),
             "channel": ("channel", None),
+        },
+    ),
+    "TrustedDeviceList": (
+        None,
+        {
+            "data": ("data", "TrustedDevice"),
+            "total_count": ("total_count", None),
+        },
+    ),
+    "BiometricCredentialList": (
+        None,
+        {
+            "data": ("data", "BiometricCredential"),
+            "total_count": ("total_count", None),
+        },
+    ),
+    "InstanceSettings": (
+        None,
+        {
+            "object": ("object", None),
+            "id": ("id", None),
+            "restricted_to_allowlist": ("restricted_to_allowlist", None),
+            "from_email_address": ("from_email_address", None),
+            "progressive_sign_up": ("progressive_sign_up", None),
+            "enhanced_email_deliverability": ("enhanced_email_deliverability", None),
+        },
+    ),
+    "MachineList": (
+        None,
+        {
+            "data": ("data", "Machine"),
+            "total_count": ("total_count", None),
+        },
+    ),
+    "MachineDeleted": (
+        None,
+        {
+            "object": ("object", None),
+            "id": ("id", None),
+            "deleted": ("deleted", None),
+        },
+    ),
+    "MachineSecretKey": (
+        None,
+        {
+            "object": ("object", None),
+            "secret": ("secret", None),
+        },
+    ),
+    "MachineScopeDeleted": (
+        None,
+        {
+            "object": ("object", None),
+            "from_machine_id": ("from_machine_id", None),
+            "to_machine_id": ("to_machine_id", None),
+            "deleted": ("deleted", None),
+        },
+    ),
+    "WaitlistEntries": (
+        None,
+        {
+            "data": ("data", "WaitlistEntry"),
+            "total_count": ("total_count", None),
+        },
+    ),
+    "SCIMDirectoryList": (
+        None,
+        {
+            "data": ("data", "SCIMDirectory"),
+            "total_count": ("total_count", None),
+        },
+    ),
+    "SCIMGroupRoleMappingList": (
+        None,
+        {
+            "data": ("data", "SCIMGroupRoleMapping"),
+            "total_count": ("total_count", None),
+        },
+    ),
+    "SCIMGroupRoleMappingDeleted": (
+        None,
+        {
+            "object": ("object", None),
+            "id": ("id", None),
+            "deleted": ("deleted", None),
+        },
+    ),
+    "DirectoryList": (
+        None,
+        {
+            "data": ("data", "Directory"),
+            "total_count": ("total_count", None),
+        },
+    ),
+    "DirectoryGroupRoleMappingList": (
+        None,
+        {
+            "data": ("data", "DirectoryGroupRoleMapping"),
+            "total_count": ("total_count", None),
+        },
+    ),
+    "DirectoryGroupRoleMappingDeleted": (
+        None,
+        {
+            "object": ("object", None),
+            "id": ("id", None),
+            "deleted": ("deleted", None),
         },
     ),
     "CreateSessionTokenResponse": (
@@ -142,117 +283,10 @@ WIRE_SCHEMAS_PART_4: dict[str, tuple[Any, dict[str, tuple[str, str | None]]]] = 
             "user_id": ("user_id", None),
         },
     ),
-    "ListUserTrustedDevicesResponse": (
-        None,
-        {
-            "data": ("data", "TrustedDevice"),
-            "total_count": ("total_count", None),
-        },
-    ),
-    "ListUserBiometricCredentialsResponse": (
-        None,
-        {
-            "data": ("data", "BiometricCredential"),
-            "total_count": ("total_count", None),
-        },
-    ),
     "DeleteTOTPResponse": (
         None,
         {
             "user_id": ("user_id", None),
-        },
-    ),
-    "UpdateInstanceAuthConfigResponse": (
-        None,
-        {
-            "object": ("object", None),
-            "id": ("id", None),
-            "restricted_to_allowlist": ("restricted_to_allowlist", None),
-            "from_email_address": ("from_email_address", None),
-            "progressive_sign_up": ("progressive_sign_up", None),
-            "enhanced_email_deliverability": ("enhanced_email_deliverability", None),
-        },
-    ),
-    "ListMachinesResponse": (
-        None,
-        {
-            "data": ("data", "Machine"),
-            "total_count": ("total_count", None),
-        },
-    ),
-    "DeleteMachineResponse": (
-        None,
-        {
-            "object": ("object", None),
-            "id": ("id", None),
-            "deleted": ("deleted", None),
-        },
-    ),
-    "GetMachineSecretKeyResponse": (
-        None,
-        {
-            "object": ("object", None),
-            "secret": ("secret", None),
-        },
-    ),
-    "DeleteMachineScopeResponse": (
-        None,
-        {
-            "object": ("object", None),
-            "from_machine_id": ("from_machine_id", None),
-            "to_machine_id": ("to_machine_id", None),
-            "deleted": ("deleted", None),
-        },
-    ),
-    "ListWaitlistEntriesResponse": (
-        None,
-        {
-            "data": ("data", "WaitlistEntry"),
-            "total_count": ("total_count", None),
-        },
-    ),
-    "ListSCIMDirectoriesResponse": (
-        None,
-        {
-            "data": ("data", "SCIMDirectory"),
-            "total_count": ("total_count", None),
-        },
-    ),
-    "ListSCIMGroupRoleMappingsResponse": (
-        None,
-        {
-            "data": ("data", "SCIMGroupRoleMapping"),
-            "total_count": ("total_count", None),
-        },
-    ),
-    "DeleteSCIMGroupRoleMappingResponse": (
-        None,
-        {
-            "object": ("object", None),
-            "id": ("id", None),
-            "deleted": ("deleted", None),
-        },
-    ),
-    "ListDirectoriesResponse": (
-        None,
-        {
-            "data": ("data", "Directory"),
-            "total_count": ("total_count", None),
-        },
-    ),
-    "ListDirectoryGroupRoleMappingsResponse": (
-        None,
-        {
-            "data": ("data", "DirectoryGroupRoleMapping"),
-            "total_count": ("total_count", None),
-        },
-    ),
-    "DeleteDirectoryGroupRoleMappingResponse": (
-        None,
-        {
-            "object": ("object", None),
-            "id": ("id", None),
-            "deleted": ("deleted", None),
         },
     ),
     "CreateAdminPortalLinkTokenResponse": (
@@ -507,41 +541,6 @@ WIRE_SCHEMAS_PART_4: dict[str, tuple[Any, dict[str, tuple[str, str | None]]]] = 
             "email_address": ("email_address", None),
             "first_name": ("first_name", None),
             "last_name": ("last_name", None),
-        },
-    ),
-    "UpdateSAMLConnectionLoginHint": (
-        None,
-        {
-            "mode": ("mode", None),
-            "source": ("source", None),
-        },
-    ),
-    "CreateEnterpriseConnectionSaml": (
-        None,
-        {
-            "idp_entity_id": ("idp_entity_id", None),
-            "idp_sso_url": ("idp_sso_url", None),
-            "idp_certificate": ("idp_certificate", None),
-            "idp_certificates": ("idp_certificates", None),
-            "idp_metadata_url": ("idp_metadata_url", None),
-            "idp_metadata": ("idp_metadata", None),
-            "attribute_mapping": ("attribute_mapping", None),
-            "allow_subdomains": ("allow_subdomains", None),
-            "allow_idp_initiated": ("allow_idp_initiated", None),
-            "force_authn": ("force_authn", None),
-            "login_hint": ("login_hint", None),
-        },
-    ),
-    "CreateEnterpriseConnectionOidc": (
-        None,
-        {
-            "client_id": ("client_id", None),
-            "client_secret": ("client_secret", None),
-            "discovery_url": ("discovery_url", None),
-            "auth_url": ("auth_url", None),
-            "token_url": ("token_url", None),
-            "user_info_url": ("user_info_url", None),
-            "requires_pkce": ("requires_pkce", None),
         },
     ),
 }

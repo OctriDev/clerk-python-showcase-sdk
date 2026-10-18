@@ -8,73 +8,8 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
 from octridev_clerk.client import NOT_GIVEN, NotGiven
-from octridev_clerk.types.machines import MachineWithoutScopedMachines
 
 from ..validation import validate_length, validate_pattern, validate_range, validate_required
-
-
-class CreateMachineResponseVariant1(BaseModel):
-    secret_key: str
-    """The secret key for the machine, only returned upon creation."""
-
-    @model_validator(mode="before")
-    @classmethod
-    def _validate_required(cls, value):
-        validate_required(value, ["secret_key"])
-        return value
-
-
-class CreateMachineResponse(BaseModel):
-    model_config = ConfigDict(populate_by_name=False, arbitrary_types_allowed=True)
-
-    object: Literal["machine"] | str
-    """Required enumerated value serialized in the `object` wire field."""
-    id: str
-    """Unique identifier for the machine."""
-    name: str
-    """The name of the machine."""
-    instance_id: str
-    """The ID of the instance this machine belongs to."""
-    created_at: int
-    """Unix timestamp of creation."""
-    updated_at: int
-    """Unix timestamp of last update."""
-    scoped_machines: list[MachineWithoutScopedMachines]
-    """Array of machines this machine has access to."""
-    secret_key: str
-    """The secret key for the machine, only returned upon creation."""
-    default_token_ttl: int | NotGiven = NOT_GIVEN
-    """The default time-to-live (TTL) in seconds for tokens created by this machine."""
-
-    @model_validator(mode="before")
-    @classmethod
-    def _validate_required(cls, value):
-        validate_required(
-            value,
-            [
-                "object",
-                "id",
-                "name",
-                "instance_id",
-                "created_at",
-                "updated_at",
-                "scoped_machines",
-                "secret_key",
-            ],
-        )
-        return value
-
-    @field_validator("name")
-    @classmethod
-    def _validate_name(cls, value):
-        validate_length("name", value, min=1, max=255)
-        return value
-
-    @field_validator("default_token_ttl")
-    @classmethod
-    def _validate_default_token_ttl(cls, value):
-        validate_range("default_token_ttl", value, min=1)
-        return value
 
 
 class CreateAdminPortalLinkTokenResponse(BaseModel):

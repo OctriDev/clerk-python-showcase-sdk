@@ -240,3 +240,24 @@ class VerificationScim(BaseModel):
     def _validate_object(cls, value):
         validate_enum("object", value, ["verification_scim"])
         return value
+
+
+class VerificationResponse(BaseModel):
+    """Typed representation of the `VerificationResponse` API schema."""
+
+    model_config = ConfigDict(populate_by_name=False, arbitrary_types_allowed=True)
+
+    object: str | NotGiven = NOT_GIVEN
+    """The type of the verification object."""
+    id: str | NotGiven = NOT_GIVEN
+    """The ID of the verification. Pass this to attempt_verification."""
+    status: str | NotGiven = NOT_GIVEN
+    """The status of the verification (unverified, verified, expired, or failed)."""
+    strategy: str | NotGiven = NOT_GIVEN
+    """The verification strategy (email_code or phone_code)."""
+    attempts: int | None | NotGiven = NOT_GIVEN
+    """The number of attempts made against this verification."""
+    expire_at: int | None | NotGiven = NOT_GIVEN
+    """Unix timestamp (milliseconds) at which the code expires."""
+    channel: str | None | NotGiven = NOT_GIVEN
+    """The channel the code was sent over (phone numbers only)."""
