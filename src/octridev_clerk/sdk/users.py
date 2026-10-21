@@ -22,11 +22,11 @@ from ..methods.users import (
     delete_totp,
     delete_totp_sync,
     delete_user,
+    delete_user_passkey,
+    delete_user_passkey_sync,
     delete_user_profile_image,
     delete_user_profile_image_sync,
     delete_user_sync,
-    delete_users_passkey,
-    delete_users_passkey_sync,
     delete_users_web3_wallet,
     delete_users_web3_wallet_sync,
     disable_mfa,
@@ -142,8 +142,8 @@ class _UsersNamespace:
         self.disable_mfa.__doc__ = disable_mfa_sync.__doc__
         self.delete_backup_code = partial(delete_backup_code_sync, config)
         self.delete_backup_code.__doc__ = delete_backup_code_sync.__doc__
-        self.delete_passkey = partial(delete_users_passkey_sync, config)
-        self.delete_passkey.__doc__ = delete_users_passkey_sync.__doc__
+        self.delete_passkey = partial(delete_user_passkey_sync, config)
+        self.delete_passkey.__doc__ = delete_user_passkey_sync.__doc__
         self.list_trusted_devices = partial(list_user_trusted_devices_sync, config)
         self.list_trusted_devices.__doc__ = list_user_trusted_devices_sync.__doc__
         self.revoke_trusted_device = partial(revoke_user_trusted_device_sync, config)
@@ -220,8 +220,8 @@ class _AsyncUsersNamespace:
         self.disable_mfa.__doc__ = disable_mfa.__doc__
         self.delete_backup_code = partial(delete_backup_code, config)
         self.delete_backup_code.__doc__ = delete_backup_code.__doc__
-        self.delete_passkey = partial(delete_users_passkey, config)
-        self.delete_passkey.__doc__ = delete_users_passkey.__doc__
+        self.delete_passkey = partial(delete_user_passkey, config)
+        self.delete_passkey.__doc__ = delete_user_passkey.__doc__
         self.list_trusted_devices = partial(list_user_trusted_devices, config)
         self.list_trusted_devices.__doc__ = list_user_trusted_devices.__doc__
         self.revoke_trusted_device = partial(revoke_user_trusted_device, config)
