@@ -3,7 +3,7 @@
 
 import importlib
 
-from .users_part001 import (
+from .users_shared import (
     BiometricCredential,
     EnterpriseAccountConnection,
     OAuthAccessToken,
@@ -18,7 +18,7 @@ from .users_part001 import (
     User,
     VerificationWeb3,
 )
-from .users_part002 import (
+from .users_shared2 import (
     BiometricCredentialList,
     EnterpriseAccount,
     EnterpriseAccountVerification,
@@ -73,17 +73,17 @@ __all__ = [
 
 # Forward references deferred to TYPE_CHECKING in the parts above are
 # resolvable now that every part is loaded.
-_users_part001 = importlib.import_module(".users_part001", __package__)
+_users_shared = importlib.import_module(".users_shared", __package__)
 
-_deferred_users_part001: tuple[tuple[str, object], ...] = (
+_deferred_users_shared: tuple[tuple[str, object], ...] = (
     ("EnterpriseAccount", EnterpriseAccount),
     ("ExternalAccountWithVerification", ExternalAccountWithVerification),
     ("SAMLAccount", SAMLAccount),
     ("VerificationPasskey", VerificationPasskey),
     ("Web3Wallet", Web3Wallet),
 )
-for _name, _value in _deferred_users_part001:
-    setattr(_users_part001, _name, _value)
+for _name, _value in _deferred_users_shared:
+    setattr(_users_shared, _name, _value)
 
 Passkey.model_rebuild()
 SAMLAccountConnection.model_rebuild()
